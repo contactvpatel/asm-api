@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Repositories\IAccessGroupAssignmentRepository.cs" />
+    <Compile Remove="Repositories\IAccessGroupModulePermissionRepository.cs" />
+    <Compile Remove="Repositories\IAccessGroupRepository.cs" />
+    <Compile Remove="Repositories\IPermissionRepository.cs" />
+  </ItemGroup>
+
+</Project>

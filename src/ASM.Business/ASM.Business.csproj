@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ASM.Core\ASM.Core.csproj" />
+    <ProjectReference Include="..\ASM.Infrastructure\ASM.Infrastructure.csproj" />
+    <ProjectReference Include="..\ASM.Util\ASM.Util.csproj" />
+  </ItemGroup>
+
+</Project>
