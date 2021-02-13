@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ASM.Core.Entities;
 using ASM.Core.Repositories;
-using ASM.Infrastructure.Data;
+using ASM.Core.Specifications;
 using ASM.Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,66 +12,29 @@ namespace ASM.Infrastructure.Repositories
 {
     public class ModuleRepository : Repository<Module>, IModuleRepository
     {
-        private readonly ASMContext _asmContext;
+        private readonly Data.ASMContext _asmContext;
 
-        public ModuleRepository(ASMContext asmContext) : base(asmContext)
+        public ModuleRepository(Data.ASMContext asmContext) : base(asmContext)
         {
             _asmContext = asmContext ?? throw new ArgumentNullException(nameof(asmContext));
         }
 
-        public async Task<IEnumerable<Module>> Get()
+        public async Task<IEnumerable<Module>> GetAll()
         {
-            return await _asmContext.Modules
-                .Include(x => x.ModuleType)
-                .Include(x => x.ModuleHierarchyModules)
-                .Where(x => x.IsActive && x.IsDeleted == false)
-                .OrderBy(x => x.ApplicationId)
-                .ThenBy(x => x.Name)
-                .ToListAsync();
+            var spec = new ModuleSpecification();
+            return (await GetAsync(spec)).OrderBy(x => x.ApplicationId).ThenBy(x => x.Name).ToList();
         }
 
-        public async Task<Module> Create(Module module)
+        public async Task<Module> GetById(int id)
         {
-            await using var transaction = await _asmContext.Database.BeginTransactionAsync();
-
-            await _asmContext.Modules.AddAsync(module);
-            await _asmContext.SaveChangesAsync();
-
-            await transaction.CommitAsync();
-
-            return module;
+            var spec = new ModuleSpecification(id);
+            return (await GetAsync(spec)).FirstOrDefault();
         }
 
-        public async Task Update(Module module)
+        public async Task<IEnumerable<Module>> GetByApplicationId(Guid applicationId)
         {
-            await using var transaction = await _asmContext.Database.BeginTransactionAsync();
-
-            var existingModule = await _asmContext.Modules.FirstOrDefaultAsync(x => x.ModuleId == module.ModuleId);
-
-            var existingModuleHierarchies = _asmContext.ModuleHierarchies.Where(x => x.ModuleId == module.ModuleId);
-            foreach (var currentHierarchy in existingModuleHierarchies)
-            {
-                currentHierarchy.IsDeleted = true;
-                currentHierarchy.LastUpdated = DateTime.Now;
-            }
-
-            _asmContext.ModuleHierarchies.RemoveRange(existingModuleHierarchies);
-
-            module.CreatedBy = existingModule.CreatedBy;
-            module.Created = existingModule.Created;
-            module.LastUpdated = DateTime.Now;
-            
-            _asmContext.Modules.Update(module);
-
-            await _asmContext.SaveChangesAsync();
-            await transaction.CommitAsync();
-        }
-
-        public async Task<IEnumerable<Module>> GetParentModules(int moduleId)
-        {
-            return await _asmContext.Modules
-                .Where(p => p.ModuleId != moduleId)
-                .ToListAsync();
+            var spec = new ModuleSpecification(applicationId);
+            return (await GetAsync(spec)).OrderBy(x => x.Name).ToList();
         }
 
         public async Task<bool> IsModuleExists(Module module)
@@ -79,15 +42,15 @@ namespace ASM.Infrastructure.Repositories
             Module existModule;
             if (module.ModuleId == 0)
             {
-                existModule = await _asmContext.Modules.FirstOrDefaultAsync(x =>
+                existModule = await _asmContext.Modules.AsNoTracking().FirstOrDefaultAsync(x =>
                     x.ApplicationId == module.ApplicationId && x.Code == module.Code &&
-                    x.Name == module.Name && x.ModuleTypeId == module.ModuleTypeId);
+                    x.Name == module.Name && x.ModuleTypeId == module.ModuleTypeId && x.IsDeleted == false);
             }
             else
             {
-                existModule = await _asmContext.Modules.FirstOrDefaultAsync(x =>
+                existModule = await _asmContext.Modules.AsNoTracking().FirstOrDefaultAsync(x =>
                     x.ModuleId != module.ModuleId && x.ApplicationId == module.ApplicationId && x.Code == module.Code &&
-                    x.Name == module.Name && x.ModuleTypeId == module.ModuleTypeId);
+                    x.Name == module.Name && x.ModuleTypeId == module.ModuleTypeId && x.IsDeleted == false);
             }
 
             return existModule != null;

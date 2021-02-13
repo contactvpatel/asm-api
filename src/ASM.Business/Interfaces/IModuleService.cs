@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ASM.Business.Models;
 
@@ -6,12 +7,12 @@ namespace ASM.Business.Interfaces
 {
     public interface IModuleService
     {
-        Task<IEnumerable<ModuleModel>> Get();
+        Task<IEnumerable<ModuleModel>> GetAll();
         Task<ModuleModel> GetById(int id);
-        Task<IEnumerable<ModuleModel>> GetParentModules(int moduleId);
+        Task<IEnumerable<ModuleModel>> GetByApplicationId(Guid applicationId);
         Task<ModuleModel> Create(ModuleModel module);
         Task Update(ModuleModel module);
-        Task Delete(ModuleModel module);
+        Task Delete(int id);
         Task<bool> IsModuleExists(ModuleModel module);
     }
 }

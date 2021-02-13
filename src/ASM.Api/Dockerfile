@@ -7,10 +7,14 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["ASM.Api/ASM.Api.csproj", "ASM.Api/"]
-RUN dotnet restore "ASM.Api/ASM.Api.csproj"
+COPY ["src/ASM.Api/ASM.Api.csproj", "src/ASM.Api/"]
+COPY ["src/ASM.Business/ASM.Business.csproj", "src/ASM.Business/"]
+COPY ["src/ASM.Infrastructure/ASM.Infrastructure.csproj", "src/ASM.Infrastructure/"]
+COPY ["src/ASM.Util/ASM.Util.csproj", "src/ASM.Util/"]
+COPY ["src/ASM.Core/ASM.Core.csproj", "src/ASM.Core/"]
+RUN dotnet restore "src/ASM.Api/ASM.Api.csproj"
 COPY . .
-WORKDIR "/src/ASM.Api"
+WORKDIR "/src/src/ASM.Api"
 RUN dotnet build "ASM.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -31,7 +31,6 @@ namespace ASM.Business.Mapper
         {
             CreateMap<ModuleType, ModuleTypeModel>().ReverseMap();
             CreateMap<Module, ModuleModel>().ReverseMap();
-            CreateMap<ModuleHierarchy, ModuleHierachyModel>().ReverseMap();
             CreateMap(typeof(PagedList<>), typeof(PagedList<>)).ConvertUsing(typeof(PagedListConverter<,>));
         }
     }

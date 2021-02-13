@@ -4,11 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ASM.Util.Logging;
-using ASM.Util.Middleware;
-using ASM.Util.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using ApiError = ASM.Api.Middleware.ApiError;
 
 namespace ASM.Api.Filters
 {
@@ -32,7 +31,7 @@ namespace ASM.Api.Filters
                 var errorsInModelState = context.ModelState.Where(x => x.Value.Errors.Count > 0)
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Errors.Select(x => x.ErrorMessage)).ToArray();
 
-                var errorResponse = new Response<ApiError>(null, false, "Model Validation Failed")
+                var errorResponse = new Models.Response<ApiError>(null, false, "Model Validation Failed")
                     {Errors = new List<ApiError>()};
 
                 foreach (var error in errorsInModelState)

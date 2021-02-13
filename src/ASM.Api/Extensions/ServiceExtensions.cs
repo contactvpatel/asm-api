@@ -6,8 +6,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using ASM.Api.Extensions.Swagger;
+using ASM.Business.Services;
+using ASM.Core.Repositories;
+using ASM.Core.Repositories.Base;
 using ASM.Util.Logging;
 using ASM.Infrastructure.Data;
+using ASM.Infrastructure.Repositories;
+using ASM.Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -17,25 +22,24 @@ namespace ASM.Api.Extensions
     {
         public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Using Scrutor to map the dependencies with scoped lifetime (https://github.com/khellang/Scrutor)
-            services.Scan(scan => scan
-                .FromCallingAssembly()
-                .FromApplicationDependencies(c => c.FullName != null && c.FullName.StartsWith("ASM"))
-                .AddClasses()
-                .AsMatchingInterface().WithScopedLifetime());
+            //// Using Scrutor to map the dependencies with scoped lifetime (https://github.com/khellang/Scrutor)
+            //services.Scan(scan => scan
+            //    .FromCallingAssembly()
+            //    .FromApplicationDependencies(c => c.FullName != null && c.FullName.StartsWith("ASM"))
+            //    .AddClasses()
+            //    .AsMatchingInterface().WithScopedLifetime());
 
             // Add Database
             ConfigureDatabases(services, configuration);
 
-            //// Add Infrastructure Layer
-            //services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            //services.AddScoped<IModuleRepository, ModuleRepository>();
-            //services.AddScoped<IModuleTypeRepository, ModuleTypeRepository>();
-            //services.AddScoped<IModuleHierarchyRepository, ModuleHierarchyRepository>();
+            // Add Infrastructure Layer
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IModuleRepository, ModuleRepository>();
+            services.AddScoped<IModuleTypeRepository, ModuleTypeRepository>();
 
-            //// Add Business Layer
-            //services.AddScoped<Business.Interfaces.IModuleService, ModuleService>();
-            //services.AddScoped<Business.Interfaces.IModuleTypeService, ModuleTypeService>();
+            // Add Business Layer
+            services.AddScoped<Business.Interfaces.IModuleService, ModuleService>();
+            services.AddScoped<Business.Interfaces.IModuleTypeService, ModuleTypeService>();
 
             // Add AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -52,7 +56,7 @@ namespace ASM.Api.Extensions
         private static void ConfigureDatabases(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ASMContext>(c =>
-                c.UseSqlServer(configuration.GetConnectionString("ASMDbConnection")));
+                c.UseSqlServer(configuration.GetConnectionString("ASMDbConnection")).LogTo(Console.WriteLine));
         }
 
         public static void ConfigureCors(this IServiceCollection services)

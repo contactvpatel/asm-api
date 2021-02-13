@@ -22,60 +22,81 @@ namespace ASM.Business.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IEnumerable<ModuleModel>> Get()
+        public async Task<IEnumerable<ModuleModel>> GetAll()
         {
-            var modules = await _moduleRepository.Get();
+            var modules = await _moduleRepository.GetAll();
             return ObjectMapper.Mapper.Map<IEnumerable<ModuleModel>>(modules);
         }
 
         public async Task<ModuleModel> GetById(int id)
         {
-            var moduleById = await _moduleRepository.GetByIdAsync(id);
+            var moduleById = await _moduleRepository.GetById(id);
             return ObjectMapper.Mapper.Map<ModuleModel>(moduleById);
         }
 
-        public async Task<IEnumerable<ModuleModel>> GetParentModules(int moduleId)
+        public async Task<IEnumerable<ModuleModel>> GetByApplicationId(Guid applicationId)
         {
-            var moduleById = await _moduleRepository.GetParentModules(moduleId);
-            return ObjectMapper.Mapper.Map<IEnumerable<ModuleModel>>(moduleById);
+            var modules = await _moduleRepository.GetByApplicationId(applicationId);
+            return ObjectMapper.Mapper.Map<IEnumerable<ModuleModel>>(modules);
         }
 
         public async Task<ModuleModel> Create(ModuleModel module)
         {
-            foreach (var hierarchyModel in module.ModuleHierarchyModules)
-            {
-                hierarchyModel.Created = DateTime.Now;
-                hierarchyModel.CreatedBy = module.CreatedBy;
-                hierarchyModel.LastUpdated = DateTime.Now;
-                hierarchyModel.LastUpdatedBy = module.CreatedBy;
-            }
-            var newModule = await _moduleRepository.Create(ObjectMapper.Mapper.Map<Module>(module));
+            var isModuleExists = await _moduleRepository.IsModuleExists(ObjectMapper.Mapper.Map<Module>(module));
+            if (isModuleExists)
+                throw new ApplicationException(
+                    $"Module combination already exists. Name: {module.Name}, Code: {module.Code}, Module Type: {module.ModuleTypeId}, Application: {module.ApplicationId}");
+
+            module.Created = DateTime.Now;
+            module.LastUpdated = DateTime.Now;
+            module.LastUpdatedBy = module.CreatedBy;
+
+            var newModule = await _moduleRepository.AddAsync(ObjectMapper.Mapper.Map<Module>(module));
             _logger.LogInformationExtension(
                 $"Module is successfully created. Module Id: {module.ModuleId}, Name: {module.Name}");
+
             return ObjectMapper.Mapper.Map<ModuleModel>(newModule);
         }
 
         public async Task Update(ModuleModel module)
         {
-            foreach (var hierarchyModel in module.ModuleHierarchyModules)
-            {
-                hierarchyModel.Created = DateTime.Now;
-                hierarchyModel.CreatedBy = module.CreatedBy;
-                hierarchyModel.LastUpdated = DateTime.Now;
-                hierarchyModel.LastUpdatedBy = module.CreatedBy;
-            }
+            var isModuleExists = await _moduleRepository.IsModuleExists(ObjectMapper.Mapper.Map<Module>(module));
+            if (isModuleExists)
+                throw new ApplicationException(
+                    $"Module combination already exists. Name: {module.Name}, Code: {module.Code}, Module Type: {module.ModuleTypeId}, Application: {module.ApplicationId}");
 
-            await _moduleRepository.Update(ObjectMapper.Mapper.Map<Module>(module));
+            var existingModule = await _moduleRepository.GetByIdAsync(module.ModuleId);
+            if (existingModule == null)
+                throw new ApplicationException($"Not able to find Module with id: {module.ModuleId}");
+
+            existingModule.Name = module.Name;
+            existingModule.Code = module.Code;
+            existingModule.ModuleTypeId = module.ModuleTypeId;
+            existingModule.ApplicationId = module.ApplicationId;
+            existingModule.ParentModuleId = module.ParentModuleId == 0 ? null : module.ParentModuleId;
+            existingModule.IsActive = module.IsActive;
+            existingModule.LastUpdatedBy = module.LastUpdatedBy;
+            existingModule.LastUpdated = DateTime.Now;
+
+            await _moduleRepository.UpdateAsync(existingModule);
             _logger.LogInformationExtension(
                 $"Module is successfully updated. Module Id: {module.ModuleId}, Name: {module.Name}");
         }
 
-        public async Task Delete(ModuleModel module)
+        public async Task Delete(int id)
         {
-            module.IsDeleted = true;
-            module.LastUpdated = DateTime.Now;
-            module.LastUpdatedBy = 1;
-            await _moduleRepository.UpdateAsync(ObjectMapper.Mapper.Map<Module>(module));
+            var existingModule = await _moduleRepository.GetByIdAsync(id);
+            if (existingModule == null)
+            {
+                string message = $"Not able to find Module with id: {id}";
+                _logger.LogErrorExtension(message, null);
+                throw new ApplicationException(message);
+            }
+
+            existingModule.IsDeleted = true;
+            existingModule.LastUpdated = DateTime.Now;
+            existingModule.LastUpdatedBy = 1;
+            await _moduleRepository.UpdateAsync(existingModule);
         }
 
         public async Task<bool> IsModuleExists(ModuleModel module)

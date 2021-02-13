@@ -12,8 +12,6 @@ namespace ASM.Api.Mapper
             CreateMap<ModuleModel, ModuleResponse>().ReverseMap();
             CreateMap<ModuleModel, ModuleCreateRequest>().ReverseMap();
             CreateMap<ModuleModel, ModuleUpdateRequest>().ReverseMap();
-            CreateMap<ModuleHierachyModel, ModuleHierachyResponse>().ReverseMap();
-            CreateMap<ModuleHierachyModel, ModuleHierarchyCreateRequest>().ReverseMap();
         }
     }
 }

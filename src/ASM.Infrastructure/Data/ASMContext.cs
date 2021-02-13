@@ -18,7 +18,6 @@ namespace ASM.Infrastructure.Data
         public virtual DbSet<AccessGroupAssignment> AccessGroupAssignments { get; set; }
         public virtual DbSet<AccessGroupModulePermission> AccessGroupModulePermissions { get; set; }
         public virtual DbSet<Module> Modules { get; set; }
-        public virtual DbSet<ModuleHierarchy> ModuleHierarchies { get; set; }
         public virtual DbSet<ModuleType> ModuleTypes { get; set; }
         public virtual DbSet<Permission> Permissions { get; set; }
 
@@ -36,7 +35,7 @@ namespace ASM.Infrastructure.Data
 
             modelBuilder.Entity<AccessGroup>(entity =>
             {
-                entity.ToTable("AccessGroup", "ASM");
+                entity.ToTable("AccessGroup");
 
                 entity.Property(e => e.Created)
                     .HasColumnType("datetime")
@@ -62,7 +61,7 @@ namespace ASM.Infrastructure.Data
 
             modelBuilder.Entity<AccessGroupAssignment>(entity =>
             {
-                entity.ToTable("AccessGroupAssignment", "ASM");
+                entity.ToTable("AccessGroupAssignment");
 
                 entity.Property(e => e.Created)
                     .HasColumnType("datetime")
@@ -81,7 +80,7 @@ namespace ASM.Infrastructure.Data
 
             modelBuilder.Entity<AccessGroupModulePermission>(entity =>
             {
-                entity.ToTable("AccessGroupModulePermission", "ASM");
+                entity.ToTable("AccessGroupModulePermission");
 
                 entity.Property(e => e.Created)
                     .HasColumnType("datetime")
@@ -112,7 +111,7 @@ namespace ASM.Infrastructure.Data
 
             modelBuilder.Entity<Module>(entity =>
             {
-                entity.ToTable("Module", "ASM");
+                entity.ToTable("Module");
 
                 entity.Property(e => e.Code)
                     .IsRequired()
@@ -141,40 +140,16 @@ namespace ASM.Infrastructure.Data
                     .HasForeignKey(d => d.ModuleTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Module_ModuleType");
-            });
-
-            modelBuilder.Entity<ModuleHierarchy>(entity =>
-            {
-                entity.ToTable("ModuleHierarchy", "ASM");
-
-                entity.Property(e => e.Created)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.IsActive)
-                    .IsRequired()
-                    .HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.LastUpdated)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.Module)
-                    .WithMany(p => p.ModuleHierarchyModules)
-                    .HasForeignKey(d => d.ModuleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ModuleHierarchy_Module");
 
                 entity.HasOne(d => d.ParentModule)
-                    .WithMany(p => p.ModuleHierarchyParentModules)
+                    .WithMany(p => p.InverseParentModule)
                     .HasForeignKey(d => d.ParentModuleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ModuleHierarchy_ParentModule");
+                    .HasConstraintName("FK_Module_Module");
             });
 
             modelBuilder.Entity<ModuleType>(entity =>
             {
-                entity.ToTable("ModuleType", "ASM");
+                entity.ToTable("ModuleType");
 
                 entity.Property(e => e.Created)
                     .HasColumnType("datetime")
@@ -196,7 +171,7 @@ namespace ASM.Infrastructure.Data
 
             modelBuilder.Entity<Permission>(entity =>
             {
-                entity.ToTable("Permission", "ASM");
+                entity.ToTable("Permission");
 
                 entity.Property(e => e.Created)
                     .HasColumnType("datetime")

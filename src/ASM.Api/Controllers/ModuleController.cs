@@ -6,7 +6,6 @@ using ASM.Api.Dto;
 using ASM.Business.Interfaces;
 using ASM.Business.Models;
 using ASM.Util.Logging;
-using ASM.Util.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -40,16 +39,17 @@ namespace ASM.Api.Controllers
         public async Task<ActionResult<IEnumerable<ModuleResponse>>> Get()
         {
             _logger.LogInformationExtension("Get Modules");
-            var modules = await _moduleService.Get();
+            var modules = await _moduleService.GetAll();
             if (modules == null)
             {
                 var message = "No modules found";
-                _logger.LogErrorExtension(message, null);
-                return NotFound(new Response<ModuleResponse>(false, message));
+                _logger.LogWarningExtension(message);
+                return NotFound(new Models.Response<ModuleResponse>(false, message));
             }
 
             _logger.LogInformationExtension($"Found {modules.Count()} modules");
-            return Ok(new Response<IEnumerable<ModuleResponse>>(_mapper.Map<IEnumerable<ModuleResponse>>(modules)));
+            return Ok(new Models.Response<IEnumerable<ModuleResponse>>(
+                _mapper.Map<IEnumerable<ModuleResponse>>(modules)));
         }
 
         /// <summary>
@@ -60,15 +60,32 @@ namespace ASM.Api.Controllers
         public async Task<ActionResult<ModuleResponse>> GetById(int id)
         {
             _logger.LogInformationExtension($"Get Module By Id: {id}");
-            var product = await _moduleService.GetById(id);
-            if (product == null)
+            var module = await _moduleService.GetById(id);
+            if (module == null)
             {
                 var message = $"No module found with id {id}";
-                _logger.LogErrorExtension(message, null);
-                return NotFound(new Response<ModuleResponse>(false, message));
+                _logger.LogWarningExtension(message);
+                return NotFound(new Models.Response<ModuleResponse>(false, message));
             }
 
-            return Ok(new Response<ModuleResponse>(_mapper.Map<ModuleResponse>(product)));
+            return Ok(new Models.Response<ModuleResponse>(_mapper.Map<ModuleResponse>(module)));
+        }
+
+        [HttpGet("applications/{id}", Name = "GetModuleByApplicationId")]
+        public async Task<ActionResult<IEnumerable<ModuleResponse>>> Get(Guid id)
+        {
+            _logger.LogInformationExtension($"Get Modules by Application Id: {id}");
+            var modules = await _moduleService.GetByApplicationId(id);
+            if (modules == null)
+            {
+                var message = $"No modules found with application id {id}";
+                _logger.LogWarningExtension(message);
+                return NotFound(new Models.Response<ModuleResponse>(false, message));
+            }
+
+            _logger.LogInformationExtension($"Found {modules.Count()} modules by Application Id: {id}");
+            return Ok(new Models.Response<IEnumerable<ModuleResponse>>(
+                _mapper.Map<IEnumerable<ModuleResponse>>(modules)));
         }
 
         /// <summary>
@@ -79,19 +96,11 @@ namespace ASM.Api.Controllers
         public async Task<ActionResult<ModuleResponse>> Create([FromBody] ModuleCreateRequest moduleCreateRequest)
         {
             _logger.LogInformationExtension(
-                $"Create Module - Name: {moduleCreateRequest.Name}, Code: {moduleCreateRequest.Code}, Application: {moduleCreateRequest.ApplicationId}");
-
-            var isModuleExists = await _moduleService.IsModuleExists(_mapper.Map<ModuleModel>(moduleCreateRequest));
-            if (isModuleExists)
-            {
-                var message =
-                    $"Module combination already exists. Name: {moduleCreateRequest.Name}, Code: {moduleCreateRequest.Code}, Application: {moduleCreateRequest.ApplicationId}";
-                _logger.LogErrorExtension(message, null);
-                return UnprocessableEntity(new Response<ModuleResponse>(false, message));
-            }
+                $"Create Module - Name: {moduleCreateRequest.Name}, Code: {moduleCreateRequest.Code}, Module Type: {moduleCreateRequest.ModuleTypeId}, Application: {moduleCreateRequest.ApplicationId}");
 
             var newModule = await _moduleService.Create(_mapper.Map<ModuleModel>(moduleCreateRequest));
-            return Ok(new Response<ModuleResponse>(_mapper.Map<ModuleResponse>(newModule)));
+
+            return Ok(new Models.Response<ModuleResponse>(_mapper.Map<ModuleResponse>(newModule)));
         }
 
         /// <summary>
@@ -102,19 +111,11 @@ namespace ASM.Api.Controllers
         public async Task<ActionResult<ModuleResponse>> Update([FromBody] ModuleUpdateRequest moduleUpdateRequest)
         {
             _logger.LogInformationExtension(
-                $"Update Module - Name: {moduleUpdateRequest.Name}, Code: {moduleUpdateRequest.Code}, Application: {moduleUpdateRequest.ApplicationId}");
-
-            var isModuleExists = await _moduleService.IsModuleExists(_mapper.Map<ModuleModel>(moduleUpdateRequest));
-            if (isModuleExists)
-            {
-                var message =
-                    $"Module combination already exists. Name: {moduleUpdateRequest.Name}, Code: {moduleUpdateRequest.Code}, Application: {moduleUpdateRequest.ApplicationId}";
-                _logger.LogErrorExtension(message, null);
-                return UnprocessableEntity(new Response<ModuleResponse>(false, message));
-            }
+                $"Update Module - Name: {moduleUpdateRequest.Name}, Code: {moduleUpdateRequest.Code}, Module Type: {moduleUpdateRequest.ModuleTypeId}, Application: {moduleUpdateRequest.ApplicationId}");
 
             await _moduleService.Update(_mapper.Map<ModuleModel>(moduleUpdateRequest));
-            return Ok(new Response<ModuleResponse>(null, true, string.Empty));
+
+            return Ok(new Models.Response<ModuleResponse>(null, true, string.Empty));
         }
 
         [HttpDelete("{id}", Name = "DeleteModule")]
@@ -122,17 +123,9 @@ namespace ASM.Api.Controllers
         {
             _logger.LogInformationExtension($"Delete Module - Id: {id}");
 
-            var moduleEntity = await _moduleService.GetById(id);
-            if (moduleEntity == null)
-            {
-                var message = $"Module with id: {id}, hasn't been found in db.";
-                _logger.LogErrorExtension(message, null);
-                return NotFound(new Response<ModuleResponse>(false, message));
-            }
+            await _moduleService.Delete(id);
 
-            await _moduleService.Delete(moduleEntity);
-
-            return Ok(new Response<ModuleResponse>(null));
+            return Ok(new Models.Response<ModuleResponse>(null));
         }
     }
 }

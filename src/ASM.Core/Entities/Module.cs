@@ -9,8 +9,7 @@ namespace ASM.Core.Entities
         public Module()
         {
             AccessGroupModulePermissions = new HashSet<AccessGroupModulePermission>();
-            ModuleHierarchyModules = new HashSet<ModuleHierarchy>();
-            ModuleHierarchyParentModules = new HashSet<ModuleHierarchy>();
+            InverseParentModule = new HashSet<Module>();
         }
 
         public int ModuleId { get; set; }
@@ -18,11 +17,12 @@ namespace ASM.Core.Entities
         public string Code { get; set; }
         public int ModuleTypeId { get; set; }
         public Guid ApplicationId { get; set; }
-        public bool IsActive { get; set; }
+        public int? ParentModuleId { get; set; }
+        public bool? IsActive { get; set; }
 
         public virtual ModuleType ModuleType { get; set; }
+        public virtual Module ParentModule { get; set; }
         public virtual ICollection<AccessGroupModulePermission> AccessGroupModulePermissions { get; set; }
-        public virtual ICollection<ModuleHierarchy> ModuleHierarchyModules { get; set; }
-        public virtual ICollection<ModuleHierarchy> ModuleHierarchyParentModules { get; set; }
+        public virtual ICollection<Module> InverseParentModule { get; set; }
     }
 }

@@ -6,11 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using ASM.Api.Extensions;
 using ASM.Api.Filters;
 using ASM.Api.HealthCheck;
-using ASM.Util.Middleware;
-using ASM.Util.Models;
+using ASM.Api.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using ApiError = ASM.Api.Middleware.ApiError;
 
 namespace ASM.Api
 {
@@ -92,7 +92,7 @@ namespace ASM.Api
             return LogLevel.Error;
         }
 
-        private void UpdateApiErrorResponse(HttpContext context, Exception ex, Response<ApiError> apiError)
+        private void UpdateApiErrorResponse(HttpContext context, Exception ex, Models.Response<ApiError> apiError)
         {
             if (ex.GetType().Name == nameof(SqlException))
             {

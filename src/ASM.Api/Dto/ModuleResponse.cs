@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using ASM.Business.Models;
 
 namespace ASM.Api.Dto
 {
@@ -11,8 +9,10 @@ namespace ASM.Api.Dto
         public string Code { get; set; }
         public int ModuleTypeId { get; set; }
         public Guid ApplicationId { get; set; }
-
-        public virtual ModuleTypeModel ModuleType { get; set; }
-        public virtual ICollection<ModuleHierachyResponse> ModuleHierarchyModules { get; set; }
+        public int? ParentModuleId { get; set; }
+        public bool IsActive { get; set; }
+        
+        public virtual ModuleTypeResponse ModuleType { get; set; }
+        public virtual ModuleResponse ParentModule { get; set; }
     }
 }

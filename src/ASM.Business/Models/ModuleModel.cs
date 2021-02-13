@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ASM.Business.Models.Base;
 
 namespace ASM.Business.Models
@@ -11,8 +10,10 @@ namespace ASM.Business.Models
         public string Code { get; set; }
         public int ModuleTypeId { get; set; }
         public Guid ApplicationId { get; set; }
+        public int? ParentModuleId { get; set; }
+        public bool? IsActive { get; set; }
 
         public virtual ModuleTypeModel ModuleType { get; set; }
-        public virtual ICollection<ModuleHierachyModel> ModuleHierarchyModules { get; set; }
+        public virtual ModuleModel ParentModule { get; set; }
     }
 }

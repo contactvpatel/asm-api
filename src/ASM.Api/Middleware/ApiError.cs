@@ -1,4 +1,4 @@
-﻿namespace ASM.Util.Middleware
+﻿namespace ASM.Api.Middleware
 {
     public class ApiError
     {

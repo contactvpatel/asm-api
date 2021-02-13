@@ -12,9 +12,9 @@ namespace ASM.Infrastructure.Repositories
 {
     public class ModuleTypeRepository : Repository<ModuleType>, IModuleTypeRepository
     {
-        private readonly ASMContext _asmContext;
+        private readonly Data.ASMContext _asmContext;
 
-        public ModuleTypeRepository(ASMContext asmContext) : base(asmContext)
+        public ModuleTypeRepository(Data.ASMContext asmContext) : base(asmContext)
         {
             _asmContext = asmContext ?? throw new ArgumentNullException(nameof(asmContext));
         }
@@ -22,7 +22,7 @@ namespace ASM.Infrastructure.Repositories
         public async Task<IEnumerable<ModuleType>> Get()
         {
             return await _asmContext.ModuleTypes
-                .Where(x => x.IsActive && x.IsDeleted == false)
+                .Where(x => x.IsActive == true && x.IsDeleted == false)
                 .OrderBy(x => x.Name)
                 .ToListAsync();
         }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using ASM.Util.Middleware;
+using ASM.Api.Middleware;
 
-namespace ASM.Util.Models
+namespace ASM.Api.Models
 {
     public class Response<T>
     {

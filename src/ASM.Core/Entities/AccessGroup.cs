@@ -17,7 +17,7 @@ namespace ASM.Core.Entities
         public string Description { get; set; }
         public Guid ApplicationId { get; set; }
         public int? DepartmentId { get; set; }
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
 
         public virtual ICollection<AccessGroupAssignment> AccessGroupAssignments { get; set; }
         public virtual ICollection<AccessGroupModulePermission> AccessGroupModulePermissions { get; set; }

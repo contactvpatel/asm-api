@@ -46,11 +46,11 @@ namespace ASM.Api.Controllers
             {
                 var message = "No module types found";
                 _logger.LogErrorExtension(message, null);
-                return NotFound(new Response<ModuleTypeResponse>(false, message));
+                return NotFound(new Models.Response<ModuleTypeResponse>(false, message));
             }
 
             _logger.LogInformationExtension($"Found {moduleTypes.Count()} module types");
-            return Ok(new Response<IEnumerable<ModuleTypeResponse>>(
+            return Ok(new Models.Response<IEnumerable<ModuleTypeResponse>>(
                 _mapper.Map<IEnumerable<ModuleTypeResponse>>(moduleTypes)));
         }
     }

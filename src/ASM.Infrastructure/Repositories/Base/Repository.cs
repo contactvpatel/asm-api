@@ -13,9 +13,9 @@ namespace ASM.Infrastructure.Repositories.Base
 {
     public class Repository<T> : IRepository<T> where T : Entity
     {
-        private readonly ASMContext _asmContext;
+        private readonly Data.ASMContext _asmContext;
 
-        public Repository(ASMContext asmContext)
+        public Repository(Data.ASMContext asmContext)
         {
             _asmContext = asmContext ?? throw new ArgumentNullException(nameof(asmContext));
         }
