@@ -3,25 +3,22 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ASM.Core.Entities;
 using ASM.Core.Repositories;
-using ASM.Core.Specifications;
-using ASM.Infrastructure.Data;
 using ASM.Infrastructure.Repositories.Base;
 
 namespace ASM.Infrastructure.Repositories
 {
-    public class ModuleTypeRepository : Repository<ModuleType>, IModuleTypeRepository
+    public class AccessGroupAssignmentRepository : Repository<AccessGroupAssignment>, IAccessGroupAssignmentRepository
     {
         private readonly Data.ASMContext _asmContext;
 
-        public ModuleTypeRepository(ASMContext asmContext) : base(asmContext)
+        public AccessGroupAssignmentRepository(Data.ASMContext asmContext) : base(asmContext)
         {
             _asmContext = asmContext ?? throw new ArgumentNullException(nameof(asmContext));
         }
 
-        public async Task<IEnumerable<ModuleType>> GetAll()
+        public Task<IEnumerable<AccessGroupAssignment>> GetAccessGroupAssignment()
         {
-            var spec = new ModuleTypeSpecification();
-            return await GetAsync(spec);
+            throw new NotImplementedException();
         }
     }
 }

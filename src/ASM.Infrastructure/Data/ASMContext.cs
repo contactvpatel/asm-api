@@ -19,7 +19,6 @@ namespace ASM.Infrastructure.Data
         public virtual DbSet<AccessGroupModulePermission> AccessGroupModulePermissions { get; set; }
         public virtual DbSet<Module> Modules { get; set; }
         public virtual DbSet<ModuleType> ModuleTypes { get; set; }
-        public virtual DbSet<Permission> Permissions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -101,12 +100,6 @@ namespace ASM.Infrastructure.Data
                     .HasForeignKey(d => d.ModuleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AccessGroupModulePermission_Module");
-
-                entity.HasOne(d => d.Permission)
-                    .WithMany(p => p.AccessGroupModulePermissions)
-                    .HasForeignKey(d => d.PermissionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_AccessGroupModulePermission_Permission");
             });
 
             modelBuilder.Entity<Module>(entity =>
@@ -166,28 +159,6 @@ namespace ASM.Infrastructure.Data
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<Permission>(entity =>
-            {
-                entity.ToTable("Permission");
-
-                entity.Property(e => e.Created)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.IsActive)
-                    .IsRequired()
-                    .HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.LastUpdated)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50)
                     .IsUnicode(false);
             });
 

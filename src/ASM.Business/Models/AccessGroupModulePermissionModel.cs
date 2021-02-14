@@ -1,8 +1,8 @@
-﻿using ASM.Core.Entities.Base;
+﻿using ASM.Business.Models.Base;
 
-namespace ASM.Core.Entities
+namespace ASM.Business.Models
 {
-    public partial class AccessGroupModulePermission : Entity
+    public class AccessGroupModulePermissionModel : BaseModel
     {
         public int AccessGroupModulePermissionId { get; set; }
         public int AccessGroupId { get; set; }
@@ -13,7 +13,6 @@ namespace ASM.Core.Entities
         public bool HasDeleteAccess { get; set; }
         public bool HasAccessRight { get; set; }
 
-        public virtual AccessGroup AccessGroup { get; set; }
-        public virtual Module Module { get; set; }
+        public virtual ModuleModel Module { get; set; }
     }
 }

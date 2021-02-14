@@ -11,6 +11,7 @@ namespace ASM.Core.Repositories
         Task<IEnumerable<Module>> GetAll();
         Task<Module> GetById(int id);
         Task<IEnumerable<Module>> GetByApplicationId(Guid applicationId);
+        Task Delete(int id, int userId);
         Task<bool> IsModuleExists(Module module);
     }
 }

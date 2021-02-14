@@ -23,7 +23,7 @@ namespace ASM.Business.Services
 
         public async Task<IEnumerable<ModuleTypeModel>> Get()
         {
-            var moduleType = await _moduleTypeRepository.GetAllAsync();
+            var moduleType = await _moduleTypeRepository.GetAll();
             return ObjectMapper.Mapper.Map<IEnumerable<ModuleTypeModel>>(moduleType);
         }
     }

@@ -8,10 +8,11 @@ namespace ASM.Core.Repositories
 {
     public interface IAccessGroupRepository : IRepository<AccessGroup>
     {
-        Task<IEnumerable<AccessGroup>> GetAccessGroupList();
-        Task<AccessGroup> GetAccessGroupById(int id);
+        Task<IEnumerable<AccessGroup>> GetAll();
+        Task<AccessGroup> GetById(int id);
+        Task<IEnumerable<AccessGroup>> GetByApplicationDepartment(Guid applicationId, int departmentId);
+        Task<AccessGroup> Update(AccessGroup accessGroup);
+        Task Delete(int id, int userId);
         Task<bool> IsAccessGroupExists(AccessGroup accessGroups);
-        Task<bool> IsAccessGroupNameExists(int id, string name);
-        Task<IEnumerable<AccessGroup>> GetAccessGroupByDepartment(Guid applicationId, int departmentId);
     }
 }

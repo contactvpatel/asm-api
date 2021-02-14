@@ -36,20 +36,24 @@ namespace ASM.Api.Controllers
         /// Return Module List.
         /// </summary>        
         [HttpGet(Name = "GetAllModules")]
-        public async Task<ActionResult<IEnumerable<ModuleResponse>>> Get()
+        public async Task<ActionResult<IEnumerable<ModuleResponse>>> GetAll()
         {
-            _logger.LogInformationExtension("Get Modules");
+            _logger.LogInformationExtension("Get All Modules");
             var modules = await _moduleService.GetAll();
+            string message;
             if (modules == null)
             {
-                var message = "No modules found";
+                message = "No modules found";
                 _logger.LogWarningExtension(message);
                 return NotFound(new Models.Response<ModuleResponse>(false, message));
             }
 
-            _logger.LogInformationExtension($"Found {modules.Count()} modules");
+            message = $"Found {modules.Count()} modules";
+
+            _logger.LogInformationExtension(message);
+
             return Ok(new Models.Response<IEnumerable<ModuleResponse>>(
-                _mapper.Map<IEnumerable<ModuleResponse>>(modules)));
+                _mapper.Map<IEnumerable<ModuleResponse>>(modules), message));
         }
 
         /// <summary>
@@ -72,20 +76,24 @@ namespace ASM.Api.Controllers
         }
 
         [HttpGet("applications/{id}", Name = "GetModuleByApplicationId")]
-        public async Task<ActionResult<IEnumerable<ModuleResponse>>> Get(Guid id)
+        public async Task<ActionResult<IEnumerable<ModuleResponse>>> GetByApplicationId(Guid id)
         {
             _logger.LogInformationExtension($"Get Modules by Application Id: {id}");
             var modules = await _moduleService.GetByApplicationId(id);
+            string message;
             if (modules == null)
             {
-                var message = $"No modules found with application id {id}";
+                message = $"No modules found with application id {id}";
                 _logger.LogWarningExtension(message);
                 return NotFound(new Models.Response<ModuleResponse>(false, message));
             }
 
-            _logger.LogInformationExtension($"Found {modules.Count()} modules by Application Id: {id}");
+            message = $"Found {modules.Count()} modules by Application Id: {id}";
+
+            _logger.LogInformationExtension(message);
+
             return Ok(new Models.Response<IEnumerable<ModuleResponse>>(
-                _mapper.Map<IEnumerable<ModuleResponse>>(modules)));
+                _mapper.Map<IEnumerable<ModuleResponse>>(modules), message));
         }
 
         /// <summary>
@@ -100,7 +108,7 @@ namespace ASM.Api.Controllers
 
             var newModule = await _moduleService.Create(_mapper.Map<ModuleModel>(moduleCreateRequest));
 
-            return Ok(new Models.Response<ModuleResponse>(_mapper.Map<ModuleResponse>(newModule)));
+            return Ok(new Models.Response<ModuleResponse>(_mapper.Map<ModuleResponse>(newModule), "Module is successfully created."));
         }
 
         /// <summary>
@@ -115,17 +123,22 @@ namespace ASM.Api.Controllers
 
             await _moduleService.Update(_mapper.Map<ModuleModel>(moduleUpdateRequest));
 
-            return Ok(new Models.Response<ModuleResponse>(null, true, string.Empty));
+            return Ok(new Models.Response<ModuleResponse>(null, true, "Module is successfully updated."));
         }
 
-        [HttpDelete("{id}", Name = "DeleteModule")]
-        public async Task<ActionResult<ModuleResponse>> Delete(int id)
+        /// <summary>
+        /// Delete Module. 
+        /// </summary>
+        /// <param name="id">Module Id</param>
+        /// <param name="userId">User Id</param>
+        [HttpDelete("{id}/{userId}", Name = "DeleteModule")]
+        public async Task<ActionResult<ModuleResponse>> Delete(int id, int userId)
         {
-            _logger.LogInformationExtension($"Delete Module - Id: {id}");
+            _logger.LogInformationExtension($"Delete Module - Id: {id}, User Id: {userId}");
 
-            await _moduleService.Delete(id);
+            await _moduleService.Delete(id, userId);
 
-            return Ok(new Models.Response<ModuleResponse>(null));
+            return Ok(new Models.Response<ModuleResponse>(true, "Module is successfully deleted."));
         }
     }
 }

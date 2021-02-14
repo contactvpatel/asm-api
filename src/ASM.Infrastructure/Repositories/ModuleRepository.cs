@@ -22,7 +22,7 @@ namespace ASM.Infrastructure.Repositories
         public async Task<IEnumerable<Module>> GetAll()
         {
             var spec = new ModuleSpecification();
-            return (await GetAsync(spec)).OrderBy(x => x.ApplicationId).ThenBy(x => x.Name).ToList();
+            return await GetAsync(spec);
         }
 
         public async Task<Module> GetById(int id)
@@ -34,7 +34,35 @@ namespace ASM.Infrastructure.Repositories
         public async Task<IEnumerable<Module>> GetByApplicationId(Guid applicationId)
         {
             var spec = new ModuleSpecification(applicationId);
-            return (await GetAsync(spec)).OrderBy(x => x.Name).ToList();
+            return await GetAsync(spec);
+        }
+
+        public async Task Delete(int id, int userId)
+        {
+            await using var transaction = await _asmContext.Database.BeginTransactionAsync();
+
+            var existingModule = await _asmContext.Modules.FirstOrDefaultAsync(x => x.ModuleId == id);
+            if (existingModule == null)
+                throw new ApplicationException($"Not able to find Module with id: {id}");
+
+            existingModule.IsDeleted = true;
+            existingModule.LastUpdated = DateTime.Now;
+            existingModule.LastUpdatedBy = userId;
+
+            var accessGroupModulePermissions =
+                _asmContext.AccessGroupModulePermissions.Where(x => x.IsDeleted == false && x.ModuleId == id);
+            foreach (var currentAccessGroupModulePermission in accessGroupModulePermissions)
+            {
+                currentAccessGroupModulePermission.IsDeleted = true;
+                currentAccessGroupModulePermission.LastUpdated = DateTime.Now;
+                currentAccessGroupModulePermission.LastUpdatedBy = userId;
+            }
+
+            _asmContext.Update(existingModule);
+
+            await _asmContext.SaveChangesAsync();
+
+            await transaction.CommitAsync();
         }
 
         public async Task<bool> IsModuleExists(Module module)

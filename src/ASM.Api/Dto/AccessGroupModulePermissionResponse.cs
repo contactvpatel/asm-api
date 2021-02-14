@@ -1,8 +1,6 @@
-﻿using ASM.Core.Entities.Base;
-
-namespace ASM.Core.Entities
+﻿namespace ASM.Api.Dto
 {
-    public partial class AccessGroupModulePermission : Entity
+    public class AccessGroupModulePermissionResponse
     {
         public int AccessGroupModulePermissionId { get; set; }
         public int AccessGroupId { get; set; }
@@ -12,8 +10,5 @@ namespace ASM.Core.Entities
         public bool HasUpdateAccess { get; set; }
         public bool HasDeleteAccess { get; set; }
         public bool HasAccessRight { get; set; }
-
-        public virtual AccessGroup AccessGroup { get; set; }
-        public virtual Module Module { get; set; }
     }
 }

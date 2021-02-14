@@ -12,7 +12,7 @@ namespace ASM.Business.Interfaces
         Task<IEnumerable<ModuleModel>> GetByApplicationId(Guid applicationId);
         Task<ModuleModel> Create(ModuleModel module);
         Task Update(ModuleModel module);
-        Task Delete(int id);
+        Task Delete(int id, int userId);
         Task<bool> IsModuleExists(ModuleModel module);
     }
 }

@@ -7,6 +7,6 @@ namespace ASM.Core.Repositories
 {
     public interface IModuleTypeRepository : IRepository<ModuleType>
     {
-        Task<IEnumerable<ModuleType>> Get();
+        Task<IEnumerable<ModuleType>> GetAll();
     }
 }

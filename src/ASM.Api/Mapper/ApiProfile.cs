@@ -8,10 +8,31 @@ namespace ASM.Api.Mapper
     {
         public ApiProfile()
         {
-            CreateMap<ModuleTypeModel, ModuleTypeResponse>().ReverseMap();
+            // Module Types
+            CreateMap<ModuleTypeModel, ModuleTypeResponse>();
+
+            // Modules
+            CreateMap<ModuleCreateRequest, ModuleModel>()
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.UserId));
+            CreateMap<ModuleUpdateRequest, ModuleModel>()
+                .ForMember(dest => dest.LastUpdatedBy, opt => opt.MapFrom(src => src.UserId));
             CreateMap<ModuleModel, ModuleResponse>().ReverseMap();
-            CreateMap<ModuleModel, ModuleCreateRequest>().ReverseMap();
-            CreateMap<ModuleModel, ModuleUpdateRequest>().ReverseMap();
+
+            // Access Groups
+            CreateMap<AccessGroupCreateRequest, AccessGroupModel>()
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.UserId));
+            CreateMap<AccessGroupUpdateRequest, AccessGroupModel>()
+                .ForMember(dest => dest.LastUpdatedBy, opt => opt.MapFrom(src => src.UserId));
+            CreateMap<AccessGroupModel, AccessGroupResponse>().ReverseMap();
+
+            // Access Group Module Permissions
+            CreateMap<AccessGroupModulePermissionCreateRequest, AccessGroupModulePermissionModel>().ReverseMap();
+            CreateMap<AccessGroupModulePermissionUpdateRequest, AccessGroupModulePermissionModel>().ReverseMap();
+            CreateMap<AccessGroupModulePermissionModel, AccessGroupModulePermissionResponse>().ReverseMap();
+
+            // Access Group Assignments
+            CreateMap<AccessGroupAssignmentModel, AccessGroupAssignmentRequest>().ReverseMap();
+            CreateMap<AccessGroupAssignmentModel, AccessGroupAssignmentResponse>().ReverseMap();
         }
     }
 }

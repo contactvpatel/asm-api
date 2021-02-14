@@ -7,13 +7,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using ASM.Api.Extensions.Swagger;
 using ASM.Business.Services;
+using ASM.Core.Models;
 using ASM.Core.Repositories;
 using ASM.Core.Repositories.Base;
+using ASM.Core.Services;
 using ASM.Util.Logging;
 using ASM.Infrastructure.Data;
 using ASM.Infrastructure.Repositories;
 using ASM.Infrastructure.Repositories.Base;
+using ASM.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using RestSharp;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ASM.Api.Extensions
@@ -36,16 +40,27 @@ namespace ASM.Api.Extensions
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IModuleRepository, ModuleRepository>();
             services.AddScoped<IModuleTypeRepository, ModuleTypeRepository>();
+            services.AddScoped<IAccessGroupRepository, AccessGroupRepository>();
+            services.AddScoped<IAccessGroupAssignmentRepository, AccessGroupAssignmentRepository>();
+            services.AddScoped<IMisServiceProxy, MisServiceProxy>();
 
             // Add Business Layer
             services.AddScoped<Business.Interfaces.IModuleService, ModuleService>();
             services.AddScoped<Business.Interfaces.IModuleTypeService, ModuleTypeService>();
+            services.AddScoped<Business.Interfaces.IAccessGroupService, AccessGroupService>();
 
             // Add AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // LoggingHelpers
             services.AddTransient<LoggingDelegatingHandler>();
+
+            //External Service Dependency (Example: MISService)
+            services.AddTransient<IRestClient>(c => new RestClient(configuration.GetSection("MisService:Url").Value));
+            services.Configure<MisApiModel>(configuration.GetSection("MisService"));
+
+            // Add Email Sender
+            services.AddScoped<EmailSender>();
 
             // HealthChecks
             services.AddHealthChecks().AddDbContextCheck<ASMContext>();

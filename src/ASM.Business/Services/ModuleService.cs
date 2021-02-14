@@ -24,20 +24,18 @@ namespace ASM.Business.Services
 
         public async Task<IEnumerable<ModuleModel>> GetAll()
         {
-            var modules = await _moduleRepository.GetAll();
-            return ObjectMapper.Mapper.Map<IEnumerable<ModuleModel>>(modules);
+            return ObjectMapper.Mapper.Map<IEnumerable<ModuleModel>>(await _moduleRepository.GetAll());
         }
 
         public async Task<ModuleModel> GetById(int id)
         {
-            var moduleById = await _moduleRepository.GetById(id);
-            return ObjectMapper.Mapper.Map<ModuleModel>(moduleById);
+            return ObjectMapper.Mapper.Map<ModuleModel>(await _moduleRepository.GetById(id));
         }
 
         public async Task<IEnumerable<ModuleModel>> GetByApplicationId(Guid applicationId)
         {
-            var modules = await _moduleRepository.GetByApplicationId(applicationId);
-            return ObjectMapper.Mapper.Map<IEnumerable<ModuleModel>>(modules);
+            return ObjectMapper.Mapper.Map<IEnumerable<ModuleModel>>(
+                await _moduleRepository.GetByApplicationId(applicationId));
         }
 
         public async Task<ModuleModel> Create(ModuleModel module)
@@ -52,6 +50,7 @@ namespace ASM.Business.Services
             module.LastUpdatedBy = module.CreatedBy;
 
             var newModule = await _moduleRepository.AddAsync(ObjectMapper.Mapper.Map<Module>(module));
+
             _logger.LogInformationExtension(
                 $"Module is successfully created. Module Id: {module.ModuleId}, Name: {module.Name}");
 
@@ -79,30 +78,20 @@ namespace ASM.Business.Services
             existingModule.LastUpdated = DateTime.Now;
 
             await _moduleRepository.UpdateAsync(existingModule);
+
             _logger.LogInformationExtension(
                 $"Module is successfully updated. Module Id: {module.ModuleId}, Name: {module.Name}");
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(int id, int userId)
         {
-            var existingModule = await _moduleRepository.GetByIdAsync(id);
-            if (existingModule == null)
-            {
-                string message = $"Not able to find Module with id: {id}";
-                _logger.LogErrorExtension(message, null);
-                throw new ApplicationException(message);
-            }
-
-            existingModule.IsDeleted = true;
-            existingModule.LastUpdated = DateTime.Now;
-            existingModule.LastUpdatedBy = 1;
-            await _moduleRepository.UpdateAsync(existingModule);
+            await _moduleRepository.Delete(id, userId);
+            _logger.LogInformationExtension($"Module is successfully deleted. Module Id: {id}, User Id: {userId}");
         }
 
         public async Task<bool> IsModuleExists(ModuleModel module)
         {
-            var mappedEntity = ObjectMapper.Mapper.Map<Module>(module);
-            return await _moduleRepository.IsModuleExists(mappedEntity);
+            return await _moduleRepository.IsModuleExists(ObjectMapper.Mapper.Map<Module>(module));
         }
     }
 }

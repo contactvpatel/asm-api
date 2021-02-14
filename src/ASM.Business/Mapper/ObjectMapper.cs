@@ -31,6 +31,9 @@ namespace ASM.Business.Mapper
         {
             CreateMap<ModuleType, ModuleTypeModel>().ReverseMap();
             CreateMap<Module, ModuleModel>().ReverseMap();
+            CreateMap<AccessGroupModulePermission, AccessGroupModulePermissionModel>().ReverseMap();
+            CreateMap<AccessGroupAssignment, AccessGroupAssignmentModel>().ReverseMap();
+            CreateMap<AccessGroup, AccessGroupModel>().ReverseMap();
             CreateMap(typeof(PagedList<>), typeof(PagedList<>)).ConvertUsing(typeof(PagedListConverter<,>));
         }
     }
