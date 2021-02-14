@@ -19,6 +19,7 @@ using ASM.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using RestSharp;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using MisService = ASM.Infrastructure.Services.MisService;
 
 namespace ASM.Api.Extensions
 {
@@ -42,12 +43,14 @@ namespace ASM.Api.Extensions
             services.AddScoped<IModuleTypeRepository, ModuleTypeRepository>();
             services.AddScoped<IAccessGroupRepository, AccessGroupRepository>();
             services.AddScoped<IAccessGroupAssignmentRepository, AccessGroupAssignmentRepository>();
-            services.AddScoped<IMisServiceProxy, MisServiceProxy>();
+            services.AddScoped<IMisService, MisService>();
 
             // Add Business Layer
             services.AddScoped<Business.Interfaces.IModuleService, ModuleService>();
             services.AddScoped<Business.Interfaces.IModuleTypeService, ModuleTypeService>();
             services.AddScoped<Business.Interfaces.IAccessGroupService, AccessGroupService>();
+            services.AddScoped<Business.Interfaces.IAccessGroupAssignmentService, AccessGroupAssignmentService>();
+            services.AddScoped<Business.Interfaces.IMisService, Business.Services.MisService>();
 
             // Add AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

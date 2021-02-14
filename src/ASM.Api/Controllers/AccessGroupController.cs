@@ -87,7 +87,7 @@ namespace ASM.Api.Controllers
             int departmentId)
         {
             _logger.LogInformationExtension(
-                $"Get Access Group. Application Id: {applicationId}, Department Id: {departmentId}");
+                $"GetAll Access Group. Application Id: {applicationId}, Department Id: {departmentId}");
             var accessGroups = await _accessGroupService.GetByApplicationDepartment(applicationId, departmentId);
             string message;
             if (accessGroups == null)

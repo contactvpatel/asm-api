@@ -7,6 +7,7 @@ namespace ASM.Core.Repositories
 {
     public interface IAccessGroupAssignmentRepository : IRepository<AccessGroupAssignment>
     {
-        Task<IEnumerable<AccessGroupAssignment>> GetAccessGroupAssignment();
+        Task<IEnumerable<AccessGroupAssignment>> GetAll();
+        Task Create(IEnumerable<AccessGroupAssignment> accessGroupModel);
     }
 }

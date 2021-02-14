@@ -10,34 +10,35 @@ using ASM.Core.Repositories;
 using ASM.Core.Services;
 using ASM.Util.Logging;
 using Microsoft.Extensions.Logging;
+using IMisService = ASM.Core.Services.IMisService;
 
 namespace ASM.Business.Services
 {
     public class AccessGroupService : IAccessGroupService
     {
         private readonly IAccessGroupRepository _accessGroupRepository;
-        private readonly IMisServiceProxy _misServiceProxy;
+        private readonly IMisService _misService;
         private readonly ILogger<AccessGroupService> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="accessGroupRepository"></param>
-        /// <param name="misServiceProxy"></param>
+        /// <param name="misService"></param>
         /// <param name="logger"></param>
-        public AccessGroupService(IAccessGroupRepository accessGroupRepository, IMisServiceProxy misServiceProxy,
+        public AccessGroupService(IAccessGroupRepository accessGroupRepository, IMisService misService,
             ILogger<AccessGroupService> logger)
         {
             _accessGroupRepository = accessGroupRepository ??
                                      throw new ArgumentNullException(nameof(accessGroupRepository));
-            _misServiceProxy = misServiceProxy ?? throw new ArgumentNullException(nameof(misServiceProxy));
+            _misService = misService ?? throw new ArgumentNullException(nameof(misService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<IEnumerable<AccessGroupModel>> GetAll()
         {
             var accessGroups = await _accessGroupRepository.GetAll();
-            var departments = await _misServiceProxy.GetDepartment();
+            var departments = await _misService.GetAllDepartments();
             return await Task.FromResult(
                 from accessGroup in accessGroups
                 join department in departments
@@ -84,18 +85,14 @@ namespace ASM.Business.Services
 
             accessGroupModel.Created = DateTime.Now;
             accessGroupModel.LastUpdated = DateTime.Now;
-            accessGroupModel.LastUpdatedBy = accessGroupModel.CreatedBy;
 
-            if (accessGroupModel.AccessGroupModulePermissions != null)
+            accessGroupModel.AccessGroupModulePermissions?.ToList().ForEach(x =>
             {
-                foreach (var currentAccessGroupModulePermission in accessGroupModel.AccessGroupModulePermissions)
-                {
-                    currentAccessGroupModulePermission.Created = DateTime.Now;
-                    currentAccessGroupModulePermission.CreatedBy = accessGroupModel.CreatedBy;
-                    currentAccessGroupModulePermission.LastUpdated = DateTime.Now;
-                    currentAccessGroupModulePermission.LastUpdatedBy = accessGroupModel.CreatedBy;
-                }
-            }
+                x.Created = DateTime.Now;
+                x.CreatedBy = accessGroupModel.CreatedBy;
+                x.LastUpdated = DateTime.Now;
+                x.LastUpdatedBy = accessGroupModel.LastUpdatedBy;
+            });
 
             var newAccessGroup =
                 await _accessGroupRepository.AddAsync(ObjectMapper.Mapper.Map<AccessGroup>(accessGroupModel));

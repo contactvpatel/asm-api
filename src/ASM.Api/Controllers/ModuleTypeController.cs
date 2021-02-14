@@ -38,20 +38,25 @@ namespace ASM.Api.Controllers
         /// Return Model Type List.
         /// </summary>                
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ModuleTypeResponse>>> Get()
+        public async Task<ActionResult<IEnumerable<ModuleTypeResponse>>> GetAll()
         {
-            _logger.LogInformationExtension("Get Module Types");
-            var moduleTypes = await _moduleTypeService.Get();
+            _logger.LogInformationExtension("Get All Module Types");
+            var moduleTypes = await _moduleTypeService.GetAll();
+            string message;
+
             if (moduleTypes == null)
             {
-                var message = "No module types found";
+                message = "No module types found";
                 _logger.LogErrorExtension(message, null);
                 return NotFound(new Models.Response<ModuleTypeResponse>(false, message));
             }
 
-            _logger.LogInformationExtension($"Found {moduleTypes.Count()} module types");
+            message = $"Found {moduleTypes.Count()} module types";
+
+            _logger.LogInformationExtension(message);
+
             return Ok(new Models.Response<IEnumerable<ModuleTypeResponse>>(
-                _mapper.Map<IEnumerable<ModuleTypeResponse>>(moduleTypes)));
+                _mapper.Map<IEnumerable<ModuleTypeResponse>>(moduleTypes), message));
         }
     }
 }

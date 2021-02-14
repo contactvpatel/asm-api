@@ -45,10 +45,6 @@ namespace ASM.Business.Services
                 throw new ApplicationException(
                     $"Module combination already exists. Name: {module.Name}, Code: {module.Code}, Module Type: {module.ModuleTypeId}, Application: {module.ApplicationId}");
 
-            module.Created = DateTime.Now;
-            module.LastUpdated = DateTime.Now;
-            module.LastUpdatedBy = module.CreatedBy;
-
             var newModule = await _moduleRepository.AddAsync(ObjectMapper.Mapper.Map<Module>(module));
 
             _logger.LogInformationExtension(
@@ -75,7 +71,6 @@ namespace ASM.Business.Services
             existingModule.ParentModuleId = module.ParentModuleId == 0 ? null : module.ParentModuleId;
             existingModule.IsActive = module.IsActive;
             existingModule.LastUpdatedBy = module.LastUpdatedBy;
-            existingModule.LastUpdated = DateTime.Now;
 
             await _moduleRepository.UpdateAsync(existingModule);
 

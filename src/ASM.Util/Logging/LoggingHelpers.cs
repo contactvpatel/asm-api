@@ -132,7 +132,7 @@ namespace ASM.Util.Logging
         }
 
         // Future Use for Context Details
-        private static UserInfo AddCustomContextDetails(IHttpContextAccessor ctx)
+        private static UserInfoModel AddCustomContextDetails(IHttpContextAccessor ctx)
         {
             var excluded = new List<string> {"nbf", "exp", "auth_time", "amr", "sub"};
             const string userIdClaimType = "sub";
@@ -142,7 +142,7 @@ namespace ASM.Util.Logging
             if (user == null || !user.IsAuthenticated) return null;
 
             var userId = context.User.Claims.FirstOrDefault(a => a.Type == userIdClaimType)?.Value;
-            var userInfo = new UserInfo
+            var userInfo = new UserInfoModel
             {
                 UserName = user.Name,
                 UserId = userId,

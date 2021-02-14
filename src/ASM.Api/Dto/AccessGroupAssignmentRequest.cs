@@ -6,5 +6,6 @@
         public int? RoleId { get; set; }
         public int? PositionId { get; set; }
         public int? PersonId { get; set; }
+        public int UserId { get; set; }
     }
 }

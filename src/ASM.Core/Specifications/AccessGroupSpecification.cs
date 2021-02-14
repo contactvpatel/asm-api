@@ -7,24 +7,23 @@ namespace ASM.Core.Specifications
     public class AccessGroupSpecification : BaseSpecification<AccessGroup>
     {
         public AccessGroupSpecification()
-            : base(b => b.IsDeleted == false)
+            : base(x => x.IsDeleted == false)
         {
-            AddInclude(p => p.AccessGroupModulePermissions);
             ApplyOrderBy(x => x.ApplicationId);
             ApplyOrderBy(x => x.DepartmentId);
             ApplyOrderBy(x => x.Name);
         }
 
         public AccessGroupSpecification(int id)
-            : base(b => b.IsDeleted == false && b.AccessGroupId == id)
+            : base(x => x.IsDeleted == false && x.AccessGroupId == id)
         {
-            AddInclude(p => p.AccessGroupModulePermissions);
+            AddInclude(x => x.AccessGroupModulePermissions);
         }
 
         public AccessGroupSpecification(Guid applicationId, int departmentId)
-            : base(b => b.IsDeleted == false && b.ApplicationId == applicationId && b.DepartmentId == departmentId)
+            : base(x => x.IsDeleted == false && x.ApplicationId == applicationId && x.DepartmentId == departmentId)
         {
-            AddInclude(p => p.AccessGroupModulePermissions);
+            AddInclude(x => x.AccessGroupModulePermissions);
             ApplyOrderBy(x => x.Name);
         }
     }

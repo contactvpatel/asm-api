@@ -6,6 +6,6 @@ namespace ASM.Business.Interfaces
 {
     public interface IModuleTypeService
     {
-        Task<IEnumerable<ModuleTypeModel>> Get();
+        Task<IEnumerable<ModuleTypeModel>> GetAll();
     }
 }

@@ -21,7 +21,7 @@ namespace ASM.Business.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<IEnumerable<ModuleTypeModel>> Get()
+        public async Task<IEnumerable<ModuleTypeModel>> GetAll()
         {
             var moduleType = await _moduleTypeRepository.GetAll();
             return ObjectMapper.Mapper.Map<IEnumerable<ModuleTypeModel>>(moduleType);

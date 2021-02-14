@@ -2,7 +2,7 @@
 
 namespace ASM.Util.Models
 {
-    public class UserInfo
+    public class UserInfoModel
     {
         public string UserName { get; set; }
         public string UserId { get; set; }
