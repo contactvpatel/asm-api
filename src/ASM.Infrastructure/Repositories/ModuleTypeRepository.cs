@@ -11,7 +11,7 @@ namespace ASM.Infrastructure.Repositories
 {
     public class ModuleTypeRepository : Repository<ModuleType>, IModuleTypeRepository
     {
-        private readonly Data.ASMContext _asmContext;
+        private readonly ASMContext _asmContext;
 
         public ModuleTypeRepository(ASMContext asmContext) : base(asmContext)
         {

@@ -5,15 +5,16 @@ using System.Threading.Tasks;
 using ASM.Core.Entities;
 using ASM.Core.Repositories;
 using ASM.Core.Specifications;
+using ASM.Infrastructure.Data;
 using ASM.Infrastructure.Repositories.Base;
 
 namespace ASM.Infrastructure.Repositories
 {
     public class AccessGroupAssignmentRepository : Repository<AccessGroupAssignment>, IAccessGroupAssignmentRepository
     {
-        private readonly Data.ASMContext _asmContext;
+        private readonly ASMContext _asmContext;
 
-        public AccessGroupAssignmentRepository(Data.ASMContext asmContext) : base(asmContext)
+        public AccessGroupAssignmentRepository(ASMContext asmContext) : base(asmContext)
         {
             _asmContext = asmContext ?? throw new ArgumentNullException(nameof(asmContext));
         }

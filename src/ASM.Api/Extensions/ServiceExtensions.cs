@@ -43,6 +43,7 @@ namespace ASM.Api.Extensions
             services.AddScoped<IModuleTypeRepository, ModuleTypeRepository>();
             services.AddScoped<IAccessGroupRepository, AccessGroupRepository>();
             services.AddScoped<IAccessGroupAssignmentRepository, AccessGroupAssignmentRepository>();
+            services.AddScoped<IApplicationSecurityRepository, ApplicationSecurityRepository>();
             services.AddScoped<IMisService, MisService>();
 
             // Add Business Layer
@@ -50,6 +51,7 @@ namespace ASM.Api.Extensions
             services.AddScoped<Business.Interfaces.IModuleTypeService, ModuleTypeService>();
             services.AddScoped<Business.Interfaces.IAccessGroupService, AccessGroupService>();
             services.AddScoped<Business.Interfaces.IAccessGroupAssignmentService, AccessGroupAssignmentService>();
+            services.AddScoped<Business.Interfaces.IApplicationSecurityService, ApplicationSecurityService>();
             services.AddScoped<Business.Interfaces.IMisService, Business.Services.MisService>();
 
             // Add AutoMapper

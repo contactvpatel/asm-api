@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ASM.Core.Entities;
 using ASM.Core.Repositories;
 using ASM.Core.Specifications;
+using ASM.Infrastructure.Data;
 using ASM.Infrastructure.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,9 @@ namespace ASM.Infrastructure.Repositories
 {
     public class ModuleRepository : Repository<Module>, IModuleRepository
     {
-        private readonly Data.ASMContext _asmContext;
+        private readonly ASMContext _asmContext;
 
-        public ModuleRepository(Data.ASMContext asmContext) : base(asmContext)
+        public ModuleRepository(ASMContext asmContext) : base(asmContext)
         {
             _asmContext = asmContext ?? throw new ArgumentNullException(nameof(asmContext));
         }

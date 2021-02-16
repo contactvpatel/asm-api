@@ -22,7 +22,7 @@ namespace ASM.Api.Dto
 
         public bool IsActive { get; set; }
 
-        [Required]
+        [Required] 
         public int UserId { get; set; }
     }
 }

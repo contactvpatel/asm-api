@@ -26,7 +26,6 @@ namespace ASM.Infrastructure.Repositories
             return await GetAsync(spec);
         }
 
-
         public async Task<AccessGroup> GetById(int id)
         {
             var spec = new AccessGroupSpecification(id);

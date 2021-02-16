@@ -61,7 +61,7 @@ namespace ASM.Business.Services
                     $"Module combination already exists. Name: {module.Name}, Code: {module.Code}, Module Type: {module.ModuleTypeId}, Application: {module.ApplicationId}");
 
             var existingModule = await _moduleRepository.GetByIdAsync(module.ModuleId);
-            if (existingModule == null)
+            if (existingModule == null || existingModule.IsDeleted)
                 throw new ApplicationException($"Not able to find Module with id: {module.ModuleId}");
 
             existingModule.Name = module.Name;
