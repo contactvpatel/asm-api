@@ -29,6 +29,8 @@ namespace ASM.Api
             // service dependencies         
             services.ConfigureServices(Configuration);
 
+            services.ConfigureRedisCache(Configuration);
+
             services.ConfigureApiVersioning();
 
             services.ConfigureCors();

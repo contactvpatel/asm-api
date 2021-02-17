@@ -6,20 +6,20 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using ASM.Api.Extensions.Swagger;
+using ASM.Business.Interfaces;
 using ASM.Business.Services;
 using ASM.Core.Models;
 using ASM.Core.Repositories;
 using ASM.Core.Repositories.Base;
-using ASM.Core.Services;
 using ASM.Util.Logging;
 using ASM.Infrastructure.Data;
 using ASM.Infrastructure.Repositories;
 using ASM.Infrastructure.Repositories.Base;
 using ASM.Infrastructure.Services;
+using ASM.Util.Models;
 using Microsoft.EntityFrameworkCore;
 using RestSharp;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using MisService = ASM.Infrastructure.Services.MisService;
 
 namespace ASM.Api.Extensions
 {
@@ -44,15 +44,15 @@ namespace ASM.Api.Extensions
             services.AddScoped<IAccessGroupRepository, AccessGroupRepository>();
             services.AddScoped<IAccessGroupAssignmentRepository, AccessGroupAssignmentRepository>();
             services.AddScoped<IApplicationSecurityRepository, ApplicationSecurityRepository>();
-            services.AddScoped<IMisService, MisService>();
+            services.AddScoped<Core.Services.IMisService, Infrastructure.Services.MisService>();
 
             // Add Business Layer
-            services.AddScoped<Business.Interfaces.IModuleService, ModuleService>();
-            services.AddScoped<Business.Interfaces.IModuleTypeService, ModuleTypeService>();
-            services.AddScoped<Business.Interfaces.IAccessGroupService, AccessGroupService>();
-            services.AddScoped<Business.Interfaces.IAccessGroupAssignmentService, AccessGroupAssignmentService>();
-            services.AddScoped<Business.Interfaces.IApplicationSecurityService, ApplicationSecurityService>();
-            services.AddScoped<Business.Interfaces.IMisService, Business.Services.MisService>();
+            services.AddScoped<IModuleService, ModuleService>();
+            services.AddScoped<IModuleTypeService, ModuleTypeService>();
+            services.AddScoped<IAccessGroupService, AccessGroupService>();
+            services.AddScoped<IAccessGroupAssignmentService, AccessGroupAssignmentService>();
+            services.AddScoped<IApplicationSecurityService, ApplicationSecurityService>();
+            services.AddScoped<IMisService, Business.Services.MisService>();
 
             // Add AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -61,7 +61,7 @@ namespace ASM.Api.Extensions
             services.AddTransient<LoggingDelegatingHandler>();
 
             //External Service Dependency (Example: MISService)
-            services.AddTransient<IRestClient>(c => new RestClient(configuration.GetSection("MisService:Url").Value));
+            services.AddTransient<IRestClient>(_ => new RestClient(configuration.GetSection("MisService:Url").Value));
             services.Configure<MisApiModel>(configuration.GetSection("MisService"));
 
             // Add Email Sender
@@ -156,6 +156,24 @@ namespace ASM.Api.Extensions
             //    Version = "v2.0",
             //    Title = "Application Security Module (ASM) API"
             //});
+        }
+
+        public static void ConfigureRedisCache(this IServiceCollection services, IConfiguration configuration)
+        {
+            var redisCacheSettings = new RedisCacheSettings();
+
+            configuration.GetSection(nameof(RedisCacheSettings)).Bind(redisCacheSettings);
+
+            services.AddSingleton(redisCacheSettings);
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisCacheSettings.ConnectionString;
+                options.InstanceName = redisCacheSettings.InstanceName;
+            });
+
+            services.AddSingleton<IRedisCacheService, Business.Services.RedisCacheService>();
+            services.AddSingleton<Core.Services.IRedisCacheService, Infrastructure.Services.RedisCacheService>();
         }
     }
 }

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ASM.Api.Attributes;
 using ASM.Api.Dto;
 using ASM.Business.Interfaces;
 using ASM.Util.Logging;
-using ASM.Util.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -38,6 +38,7 @@ namespace ASM.Api.Controllers
         /// Return Model Type List.
         /// </summary>                
         [HttpGet]
+        [Cached(86400)] //Cached for a day
         public async Task<ActionResult<IEnumerable<ModuleTypeResponse>>> GetAll()
         {
             _logger.LogInformationExtension("Get All Module Types");
