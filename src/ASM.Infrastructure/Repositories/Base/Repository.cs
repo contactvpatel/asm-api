@@ -83,6 +83,7 @@ namespace ASM.Infrastructure.Repositories.Base
 
         public async Task<T> AddAsync(T entity)
         {
+
             await _asmContext.Set<T>().AddAsync(entity);
             await _asmContext.SaveChangesAsync();
             return entity;
