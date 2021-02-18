@@ -49,9 +49,7 @@ namespace ASM.Api.Controllers
 
             _logger.LogInformationExtension(message);
 
-            return Ok(new Models.Response<IEnumerable<PositionModel>>(
-                _mapper.Map<IEnumerable<PositionModel>>(positions),
-                message));
+            return Ok(new Models.Response<IEnumerable<PositionModel>>(positions, message));
         }
     }
 }

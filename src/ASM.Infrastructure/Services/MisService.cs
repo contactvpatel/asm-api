@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using ASM.Core.Entities;
 using ASM.Core.Models;
 using ASM.Core.Services;
+using ASM.Util.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RestSharp;
@@ -27,11 +27,11 @@ namespace ASM.Infrastructure.Services
             _request = new RestRequest();
         }
 
-        public async Task<IEnumerable<Department>> GetAllDepartments()
+        public async Task<IEnumerable<DepartmentModel>> GetAllDepartments()
         {
             const string cacheKey = "departments";
 
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<Department>>(cacheKey);
+            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<DepartmentModel>>(cacheKey);
             if (cachedResponse != null)
                 return cachedResponse;
 
@@ -45,11 +45,11 @@ namespace ASM.Infrastructure.Services
             return response.Data;
         }
 
-        public async Task<Department> GetDepartmentById(int id)
+        public async Task<DepartmentModel> GetDepartmentById(int id)
         {
             const string cacheKey = "departments";
 
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<Department>>(cacheKey);
+            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<DepartmentModel>>(cacheKey);
             if (cachedResponse != null)
                 return cachedResponse.FirstOrDefault(x => x.DepartmentId == id);
 
@@ -61,11 +61,11 @@ namespace ASM.Infrastructure.Services
             return response.Data.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<Role>> GetAllRoles()
+        public async Task<IEnumerable<RoleModel>> GetAllRoles()
         {
             const string cacheKey = "roles";
 
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<Role>>(cacheKey);
+            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<RoleModel>>(cacheKey);
             if (cachedResponse != null)
                 return cachedResponse;
 
@@ -79,11 +79,27 @@ namespace ASM.Infrastructure.Services
             return response.Data;
         }
 
-        public async Task<IEnumerable<Role>> GetRoleByDepartmentId(int departmentId)
+        public async Task<RoleModel> GetRoleById(int id)
         {
             const string cacheKey = "roles";
 
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<Role>>(cacheKey);
+            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<RoleModel>>(cacheKey);
+            if (cachedResponse != null)
+                return cachedResponse.FirstOrDefault(x => x.RoleId == id);
+
+            var misApiUrl = _misApiModel.Value.Url;
+            var endPoint = _misApiModel.Value.Endpoint.Role;
+            var roleServiceUrl = misApiUrl + endPoint + "?roleId=" + id;
+            var response = await Execute<RoleData>(roleServiceUrl);
+
+            return response.Data.FirstOrDefault();
+        }
+
+        public async Task<IEnumerable<RoleModel>> GetRoleByDepartmentId(int departmentId)
+        {
+            const string cacheKey = "roles";
+
+            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<RoleModel>>(cacheKey);
             if (cachedResponse != null)
                 return cachedResponse.Where(x => x.DepartmentId == departmentId);
 
@@ -95,7 +111,7 @@ namespace ASM.Infrastructure.Services
             return response.Data;
         }
 
-        public async Task<IEnumerable<Position>> GetPositions(int roleId)
+        public async Task<IEnumerable<PositionModel>> GetPositions(int roleId)
         {
             var misApiUrl = _misApiModel.Value.Url;
             var endPoint = _misApiModel.Value.Endpoint.Position;

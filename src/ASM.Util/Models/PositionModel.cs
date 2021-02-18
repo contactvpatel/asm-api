@@ -2,9 +2,9 @@
 {
     public class PositionModel
     {
-        public int PositionId { get; set; }
-        public string PositionName { get; set; }
-        public string PositionShortName { get; set; }
+        public int RolePositionId { get; set; }
+        public string RolePositionName { get; set; }
+        public string RolePositionShortName { get; set; }
         public int RoleId { get; set; }
         public string RoleName { get; set; }
         public int DepartmentId { get; set; }

@@ -48,8 +48,7 @@ namespace ASM.Api.Controllers
 
             _logger.LogInformationExtension(message);
 
-            return Ok(new Models.Response<IEnumerable<DepartmentModel>>(
-                _mapper.Map<IEnumerable<DepartmentModel>>(departments), message));
+            return Ok(new Models.Response<IEnumerable<DepartmentModel>>(departments, message));
         }
 
         /// <summary>
@@ -68,7 +67,7 @@ namespace ASM.Api.Controllers
                 return NotFound(new Models.Response<DepartmentModel>(false, message));
             }
 
-            return Ok(new Models.Response<DepartmentModel>(_mapper.Map<DepartmentModel>(department)));
+            return Ok(new Models.Response<DepartmentModel>(department));
         }
     }
 }

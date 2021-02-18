@@ -3,7 +3,6 @@ using System.Linq;
 using ASM.Business.Models;
 using ASM.Core.Entities;
 using ASM.Core.Models;
-using ASM.Util.Models;
 using AutoMapper;
 
 namespace ASM.Business.Mapper
@@ -35,12 +34,6 @@ namespace ASM.Business.Mapper
             CreateMap<AccessGroup, AccessGroupModel>().ReverseMap();
             CreateMap<AccessGroupModulePermission, AccessGroupModulePermissionModel>().ReverseMap();
             CreateMap<AccessGroupAssignment, AccessGroupAssignmentModel>().ReverseMap();
-            CreateMap<Department, DepartmentModel>().ReverseMap();
-            CreateMap<Role, RoleModel>().ReverseMap();
-            CreateMap<Position, PositionModel>()
-                .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.RolePositionId))
-                .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.RolePositionName))
-                .ForMember(dest => dest.PositionShortName, opt => opt.MapFrom(src => src.RolePositionShortName));
             CreateMap(typeof(PagedList<>), typeof(PagedList<>)).ConvertUsing(typeof(PagedListConverter<,>));
         }
     }

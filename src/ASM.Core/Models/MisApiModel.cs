@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ASM.Core.Entities;
+using ASM.Util.Models;
 
 namespace ASM.Core.Models
 {
@@ -19,19 +19,19 @@ namespace ASM.Core.Models
 
     public class DepartmentData
     {
-        public IEnumerable<Department> Data { get; set; }
+        public IEnumerable<DepartmentModel> Data { get; set; }
     }
 
     public class PositionData
     {
-        public IEnumerable<Position> Data { get; set; }
+        public IEnumerable<PositionModel> Data { get; set; }
     }
     public class RoleData
     {
-        public IEnumerable<Role> Data { get; set; }
+        public IEnumerable<RoleModel> Data { get; set; }
     }
     public class PersonPositionData
     {
-        public IEnumerable<Position> Data { get; set; }
+        public IEnumerable<PositionModel> Data { get; set; }
     }
 }

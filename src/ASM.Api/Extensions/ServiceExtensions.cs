@@ -45,6 +45,7 @@ namespace ASM.Api.Extensions
             services.AddScoped<IAccessGroupAssignmentRepository, AccessGroupAssignmentRepository>();
             services.AddScoped<IApplicationSecurityRepository, ApplicationSecurityRepository>();
             services.AddScoped<Core.Services.IMisService, Infrastructure.Services.MisService>();
+            services.AddScoped<Core.Services.ISsoService, Infrastructure.Services.SsoService>();
 
             // Add Business Layer
             services.AddScoped<IModuleService, ModuleService>();
@@ -53,6 +54,7 @@ namespace ASM.Api.Extensions
             services.AddScoped<IAccessGroupAssignmentService, AccessGroupAssignmentService>();
             services.AddScoped<IApplicationSecurityService, ApplicationSecurityService>();
             services.AddScoped<IMisService, Business.Services.MisService>();
+            services.AddScoped<ISsoService, Business.Services.SsoService>();
 
             // Add AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -63,6 +65,7 @@ namespace ASM.Api.Extensions
             //External Service Dependency (Example: MISService)
             services.AddTransient<IRestClient>(_ => new RestClient(configuration.GetSection("MisService:Url").Value));
             services.Configure<MisApiModel>(configuration.GetSection("MisService"));
+            services.Configure<SsoApiModel>(configuration.GetSection("SsoService"));
 
             // Add Email Sender
             services.AddScoped<EmailSender>();

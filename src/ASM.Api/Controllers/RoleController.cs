@@ -41,21 +41,21 @@ namespace ASM.Api.Controllers
             {
                 message = "No roles found";
                 _logger.LogErrorExtension(message, null);
-                return NotFound(new Models.Response<DepartmentModel>(false, message));
+                return NotFound(new Models.Response<RoleModel>(false, message));
             }
 
             message = $"Found {roles.Count()} roles";
 
             _logger.LogInformationExtension(message);
 
-            return Ok(new Models.Response<IEnumerable<RoleModel>>(_mapper.Map<IEnumerable<RoleModel>>(roles), message));
+            return Ok(new Models.Response<IEnumerable<RoleModel>>(roles, message));
         }
 
         /// <summary>
         /// Return Roles By Department Id.
         /// </summary>
         /// <param name="departmentId">Department Id.</param>
-        [HttpGet("{departmentId}", Name = "GetRoleByDepartmentId")]
+        [HttpGet("departments/{departmentId}", Name = "GetRoleByDepartmentId")]
         public async Task<ActionResult<IEnumerable<RoleModel>>> GetByDepartmentId(int departmentId)
         {
             _logger.LogInformationExtension($"Get Roles By Department Id: {departmentId}");
@@ -66,14 +66,34 @@ namespace ASM.Api.Controllers
             {
                 message = $"No roles found by department id: {departmentId}";
                 _logger.LogErrorExtension(message, null);
-                return NotFound(new Models.Response<DepartmentModel>(false, message));
+                return NotFound(new Models.Response<RoleModel>(false, message));
             }
 
             message = $"Found {roles.Count()} roles by department id: {departmentId}";
 
             _logger.LogInformationExtension(message);
 
-            return Ok(new Models.Response<IEnumerable<RoleModel>>(_mapper.Map<IEnumerable<RoleModel>>(roles), message));
+            return Ok(new Models.Response<IEnumerable<RoleModel>>(roles, message));
+        }
+
+        /// <summary>
+        /// Return Roles By Id.
+        /// </summary>
+        /// <param name="id">Role Id.</param>
+        [HttpGet("{id}", Name = "GetRoleById")]
+        public async Task<ActionResult<RoleModel>> Get(int id)
+        {
+            _logger.LogInformationExtension($"Get Role By Id: {id}");
+            var role = await _misService.GetRoleById(id);
+
+            if (role == null)
+            {
+                var message = $"No role found by id: {id}";
+                _logger.LogErrorExtension(message, null);
+                return NotFound(new Models.Response<RoleModel>(false, message));
+            }
+
+            return Ok(new Models.Response<RoleModel>(role));
         }
     }
 }
