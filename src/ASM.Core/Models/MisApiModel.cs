@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ASM.Util.Models;
 
 namespace ASM.Core.Models
 {
@@ -17,21 +16,17 @@ namespace ASM.Core.Models
         public string PersonPosition { get; set; }
     }
 
-    public class DepartmentData
+    public class MisResponse<T>
     {
-        public IEnumerable<DepartmentModel> Data { get; set; }
+        public bool Status { get; set; }
+        public List<T> Data { get; set; }
+        public List<Messages> Messages { get; set; }
     }
 
-    public class PositionData
+    public class Messages
     {
-        public IEnumerable<PositionModel> Data { get; set; }
-    }
-    public class RoleData
-    {
-        public IEnumerable<RoleModel> Data { get; set; }
-    }
-    public class PersonPositionData
-    {
-        public IEnumerable<PositionModel> Data { get; set; }
+        public string ErrorMessage { get; set; }
+        public string FieldName { get; set; }
+        public string ErrorCode { get; set; }
     }
 }
