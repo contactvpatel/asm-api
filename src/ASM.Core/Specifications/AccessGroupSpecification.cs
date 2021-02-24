@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ASM.Core.Entities;
 using ASM.Core.Specifications.Base;
 
@@ -17,13 +18,13 @@ namespace ASM.Core.Specifications
         public AccessGroupSpecification(int id)
             : base(x => x.IsDeleted == false && x.AccessGroupId == id)
         {
-            AddInclude(x => x.AccessGroupModulePermissions);
+            AddInclude(x => x.AccessGroupModulePermissions.Where(x => x.IsDeleted == false));
         }
 
         public AccessGroupSpecification(Guid applicationId, int departmentId)
             : base(x => x.IsDeleted == false && x.ApplicationId == applicationId && x.DepartmentId == departmentId)
         {
-            AddInclude(x => x.AccessGroupModulePermissions);
+            AddInclude(x => x.AccessGroupModulePermissions.Where(x => x.IsDeleted == false));
             ApplyOrderBy(x => x.Name);
         }
     }
