@@ -75,7 +75,7 @@ namespace ASM.Infrastructure.Repositories
 
             foreach (var accessGroupModulePermission in newAccessGroupModulePermissions)
             {
-                existingAccessGroup.AccessGroupModulePermissions.Add(new AccessGroupModulePermission()
+                existingAccessGroup.AccessGroupModulePermissions.Add(new AccessGroupModulePermission
                 {
                     AccessGroupId = accessGroupModulePermission.AccessGroupId,
                     ModuleId = accessGroupModulePermission.ModuleId,

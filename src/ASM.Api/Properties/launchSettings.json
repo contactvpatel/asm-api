@@ -15,8 +15,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "use64Bit": true
+      }
     },
     "ASM.Api": {
       "commandName": "Project",

@@ -10,7 +10,6 @@ namespace ASM.Api.Dto
         [Required] 
         public string Name { get; set; }
 
-        [Required] 
         public string Description { get; set; }
 
         [NotEmpty(ErrorMessage = "Application is required and shouldn't be empty")]

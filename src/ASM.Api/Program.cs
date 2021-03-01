@@ -22,11 +22,11 @@ namespace ASM.Api
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-                //.UseSerilog((context, provider, loggerConfig) =>
-                //{
-                //    loggerConfig.LogConfiguration(context, provider, Configuration);
-                //})
-                
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
+                .UseSerilog((context, provider, loggerConfig) =>
+                {
+                    loggerConfig.LogConfiguration(context, provider, Configuration);
+                });
+
     }
 }

@@ -35,7 +35,7 @@ namespace ASM.Api
             services.ConfigureApiVersioning();
 
             services.ConfigureCors();
-            services.AddHttpContextAccessor();
+
             services.ConfigureSwagger();
 
             services.AddControllers(options =>
@@ -68,14 +68,7 @@ namespace ASM.Api
                 //options.SwaggerEndpoint("/swagger/v2/swagger.json", "v2"); // Future Version
                 options.RoutePrefix = "swagger";
             });
-            // Global Exception Handler Middleware
-         
-            if (!env.IsDevelopment())
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            app.UseStaticFiles();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

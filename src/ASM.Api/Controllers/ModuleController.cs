@@ -27,9 +27,9 @@ namespace ASM.Api.Controllers
 
         public ModuleController(IModuleService moduleService, ILogger<ModuleController> logger, IMapper mapper)
         {
-          _moduleService = moduleService ?? throw new ArgumentNullException(nameof(moduleService));
-          _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-          _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _moduleService = moduleService ?? throw new ArgumentNullException(nameof(moduleService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -108,7 +108,8 @@ namespace ASM.Api.Controllers
 
             var newModule = await _moduleService.Create(_mapper.Map<ModuleModel>(moduleCreateRequest));
 
-            return Ok(new Models.Response<ModuleResponse>(_mapper.Map<ModuleResponse>(newModule), "Module is successfully created."));
+            return Ok(new Models.Response<ModuleResponse>(_mapper.Map<ModuleResponse>(newModule),
+                "Module is successfully created."));
         }
 
         /// <summary>
