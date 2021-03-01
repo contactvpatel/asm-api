@@ -27,9 +27,9 @@ namespace ASM.Api.Controllers
 
         public ModuleController(IModuleService moduleService, ILogger<ModuleController> logger, IMapper mapper)
         {
-            _moduleService = moduleService ?? throw new ArgumentNullException(nameof(moduleService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+          _moduleService = moduleService ?? throw new ArgumentNullException(nameof(moduleService));
+          _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+          _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
