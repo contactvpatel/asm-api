@@ -18,6 +18,7 @@ namespace ASM.Business.Models
         public Guid ApplicationId { get; set; }
         public int? DepartmentId { get; set; }
         public string DepartmentName { get; set; }
+        public string ApplicationName { get; set; }
         public bool? IsActive { get; set; }
 
         public virtual ICollection<AccessGroupAssignmentModel> AccessGroupAssignments { get; set; }
