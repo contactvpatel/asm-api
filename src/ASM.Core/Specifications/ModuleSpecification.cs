@@ -10,6 +10,7 @@ namespace ASM.Core.Specifications
         {
             AddInclude(x => x.ModuleType);
             AddInclude(x => x.ParentModule);
+            //AddInclude(x => x.ApplicationModel);
             ApplyOrderBy(x => x.ApplicationId);
             ApplyOrderBy(x => x.Name);
             ApplyOrderBy(x => x.ParentModule.Name);
@@ -22,7 +23,7 @@ namespace ASM.Core.Specifications
         }
 
         public ModuleSpecification(Guid applicationId) : base(x =>
-            x.ApplicationId == applicationId && x.IsDeleted == false)
+            x.ApplicationId == applicationId && x.IsDeleted == false && x.IsActive == true)
         {
             AddInclude(x => x.ModuleType);
             AddInclude(x => x.ParentModule);

@@ -18,7 +18,7 @@ namespace ASM.Business.Services
         private readonly IAccessGroupRepository _accessGroupRepository;
         private readonly IMisService _misService;
         private readonly ILogger<AccessGroupService> _logger;
-
+        private readonly ISsoService _ssoService;
         /// <summary>
         /// 
         /// </summary>
@@ -26,8 +26,10 @@ namespace ASM.Business.Services
         /// <param name="misService"></param>
         /// <param name="logger"></param>
         public AccessGroupService(IAccessGroupRepository accessGroupRepository, IMisService misService,
-            ILogger<AccessGroupService> logger)
+            ILogger<AccessGroupService> logger, ISsoService ssoService)
         {
+            _ssoService = ssoService ??
+                                     throw new ArgumentNullException(nameof(ssoService));
             _accessGroupRepository = accessGroupRepository ??
                                      throw new ArgumentNullException(nameof(accessGroupRepository));
             _misService = misService ?? throw new ArgumentNullException(nameof(misService));
@@ -38,18 +40,24 @@ namespace ASM.Business.Services
         {
             var accessGroups = await _accessGroupRepository.GetAll();
             var departments = await _misService.GetAllDepartments();
+            var application = await _ssoService.GetAllApplications();
+
             return await Task.FromResult(
-                from accessGroup in accessGroups
+                from accessGroup in accessGroups                
+                join applications in application
+                    on accessGroup.ApplicationId equals applications.ApplicationId
                 join department in departments
-                    on accessGroup.DepartmentId equals department.DepartmentId
+                on accessGroup.DepartmentId equals department.DepartmentId into departmentJoin
+                from depart in departmentJoin.DefaultIfEmpty()
                 select new AccessGroupModel
                 {
                     AccessGroupId = accessGroup.AccessGroupId,
                     Name = accessGroup.Name,
                     Description = accessGroup.Description,
+                    ApplicationName=applications.ApplicationName,
                     ApplicationId = accessGroup.ApplicationId,
-                    DepartmentId = department.DepartmentId,
-                    DepartmentName = department.DepartmentName,
+                    DepartmentId = depart?.DepartmentId ?? 0,
+                    DepartmentName = depart?.DepartmentName ?? string.Empty,
                     LastUpdated = accessGroup.LastUpdated,
                     IsActive = accessGroup.IsActive,
                     CreatedBy = accessGroup.CreatedBy,

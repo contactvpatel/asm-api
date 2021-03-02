@@ -11,6 +11,7 @@ namespace ASM.Core.Services
         Task<IEnumerable<RoleModel>> GetAllRoles();
         Task<RoleModel> GetRoleById(int id);
         Task<IEnumerable<RoleModel>> GetRoleByDepartmentId(int departmentId);
-        Task<IEnumerable<PositionModel>> GetPositions(int roleId);
+        Task<IEnumerable<PositionModel>> GetPositionsByRole(int roleId);
+        Task<IEnumerable<PositionModel>> GetPositions();
     }
 }
