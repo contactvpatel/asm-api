@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using ApiError = ASM.Api.Middleware.ApiError;
+using Microsoft.Extensions.Hosting;
 
 namespace ASM.Api
 {

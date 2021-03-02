@@ -108,7 +108,8 @@ namespace ASM.Api.Controllers
 
             var newModule = await _moduleService.Create(_mapper.Map<ModuleModel>(moduleCreateRequest));
 
-            return Ok(new Models.Response<ModuleResponse>(_mapper.Map<ModuleResponse>(newModule), "Module is successfully created."));
+            return Ok(new Models.Response<ModuleResponse>(_mapper.Map<ModuleResponse>(newModule),
+                "Module is successfully created."));
         }
 
         /// <summary>

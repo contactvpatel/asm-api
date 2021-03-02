@@ -5,7 +5,9 @@ using System.Net;
 using System.Threading.Tasks;
 using ASM.Core.Models;
 using ASM.Core.Services;
+using ASM.Util.Logging;
 using ASM.Util.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RestSharp;
@@ -17,29 +19,19 @@ namespace ASM.Infrastructure.Services
         private readonly IRestClient _client;
         private readonly IRestRequest _request;
         private readonly IOptions<SsoApiModel> _ssoApiModel;
-        private readonly IRedisCacheService _redisCacheService;
+        private readonly ILogger<SsoService> _logger;
 
-        public SsoService(IRestClient client, IOptions<SsoApiModel> ssoApiModel, IRedisCacheService redisCacheService)
+        public SsoService(IRestClient client, IOptions<SsoApiModel> ssoApiModel, ILogger<SsoService> logger)
         {
             _ssoApiModel = ssoApiModel ?? throw new ArgumentNullException(nameof(ssoApiModel));
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _redisCacheService = redisCacheService ?? throw new ArgumentNullException(nameof(redisCacheService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _request = new RestRequest();
         }
 
         public async Task<IEnumerable<ApplicationModel>> GetAllApplications()
         {
-            const string cacheKey = "applications";
-
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<ApplicationModel>>(cacheKey);
-            if (cachedResponse != null)
-                return cachedResponse;
-
-            var applications = GetTempApplications();
-
-            await _redisCacheService.SetCacheData(cacheKey, applications, TimeSpan.FromSeconds(86400));
-
-            return applications;
+            return GetTempApplications();
 
             /*
             var ssoApiUrl = _ssoApiModel.Value.Url;
@@ -47,34 +39,25 @@ namespace ASM.Infrastructure.Services
             var applicationServiceUrl = ssoApiUrl + endPoint;
             var response = await Execute<ApplicationData>(applicationServiceUrl);
 
-            await _redisCacheService.SetCacheData(cacheKey, response.Data, TimeSpan.FromSeconds(86400));
-
+            if (!response.Status)
+                RaiseApplicationException(response);
+            
             return response.Data;
             */
         }
 
         public async Task<ApplicationModel> GetApplicationById(Guid id)
         {
-            const string cacheKey = "applications";
-
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<ApplicationModel>>(cacheKey);
-            if (cachedResponse != null)
-            {
-                var applications = GetTempApplications();
-                return applications.FirstOrDefault(x => x.ApplicationId == id);
-            }
-
-            var tempApplication = GetTempApplications().FirstOrDefault(x => x.ApplicationId == id);
-
-            await _redisCacheService.SetCacheData(cacheKey, tempApplication, TimeSpan.FromSeconds(86400));
-
-            return tempApplication;
+            return GetTempApplications().FirstOrDefault(x => x.ApplicationId == id);
 
             /*
             var ssoApiUrl = _ssoApiModel.Value.Url;
             var endPoint = _ssoApiModel.Value.Endpoint.Application;
             var applicationServiceUrl = ssoApiUrl + endPoint + "/" + id;
             var response = await Execute<ApplicationData>(applicationServiceUrl);
+
+            if (!response.Status)
+                RaiseApplicationException(response);
 
             return response.Data.FirstOrDefault();
             */
@@ -87,9 +70,20 @@ namespace ASM.Infrastructure.Services
             _request.Method = Method.GET;
             _request.AddHeader("Content-type", "application/json");
             var response = await _client.ExecuteAsync(_request);
+
             if (response.StatusCode == HttpStatusCode.OK)
                 return JsonConvert.DeserializeObject<T>(response.Content);
+
             throw new ApplicationException(response.Content);
+        }
+
+        private void RaiseApplicationException<T>(MisResponse<T> response)
+        {
+            var errorMessage = response.Messages?.FirstOrDefault()?.FieldName + "-" +
+                               response.Messages?.FirstOrDefault()?.ErrorCode + "-" +
+                               response.Messages?.FirstOrDefault()?.ErrorMessage;
+            _logger.LogErrorExtension(errorMessage, null);
+            throw new ApplicationException(errorMessage);
         }
 
         private static List<ApplicationModel> GetTempApplications()

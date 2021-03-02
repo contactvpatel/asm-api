@@ -19,27 +19,18 @@ namespace ASM.Infrastructure.Services
         private readonly IRestClient _client;
         private readonly IRestRequest _request;
         private readonly IOptions<MisApiModel> _misApiModel;
-        private readonly IRedisCacheService _redisCacheService;
         private readonly ILogger<MisService> _logger;
 
-        public MisService(IRestClient client, IOptions<MisApiModel> misApiModel, IRedisCacheService redisCacheService,
-            ILogger<MisService> logger)
+        public MisService(IRestClient client, IOptions<MisApiModel> misApiModel, ILogger<MisService> logger)
         {
             _misApiModel = misApiModel ?? throw new ArgumentNullException(nameof(misApiModel));
             _client = client ?? throw new ArgumentNullException(nameof(client));
-            _redisCacheService = redisCacheService ?? throw new ArgumentNullException(nameof(redisCacheService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _request = new RestRequest();
         }
 
         public async Task<IEnumerable<DepartmentModel>> GetAllDepartments()
         {
-            const string cacheKey = "departments";
-
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<DepartmentModel>>(cacheKey);
-            if (cachedResponse != null)
-                return cachedResponse;
-
             var misApiUrl = _misApiModel.Value.Url;
             var endPoint = _misApiModel.Value.Endpoint.Department;
             var departmentServiceUrl = misApiUrl + endPoint + "?divisionId=" + 1;
@@ -48,19 +39,11 @@ namespace ASM.Infrastructure.Services
             if (!response.Status)
                 RaiseApplicationException(response);
 
-            await _redisCacheService.SetCacheData(cacheKey, response.Data, TimeSpan.FromSeconds(86400));
-
             return response.Data;
         }
 
         public async Task<DepartmentModel> GetDepartmentById(int id)
         {
-            const string cacheKey = "departments";
-
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<DepartmentModel>>(cacheKey);
-            if (cachedResponse != null)
-                return cachedResponse.FirstOrDefault(x => x.DepartmentId == id);
-
             var misApiUrl = _misApiModel.Value.Url;
             var endPoint = _misApiModel.Value.Endpoint.Department;
             var departmentServiceUrl = misApiUrl + endPoint + "?divisionId=" + 1 + "&departmentId=" + id;
@@ -74,12 +57,6 @@ namespace ASM.Infrastructure.Services
 
         public async Task<IEnumerable<RoleModel>> GetAllRoles()
         {
-            const string cacheKey = "roles";
-
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<RoleModel>>(cacheKey);
-            if (cachedResponse != null)
-                return cachedResponse;
-
             var misApiUrl = _misApiModel.Value.Url;
             var endPoint = _misApiModel.Value.Endpoint.Role;
             var roleServiceUrl = misApiUrl + endPoint + "?divisionId=" + 1;
@@ -88,19 +65,11 @@ namespace ASM.Infrastructure.Services
             if (!response.Status)
                 RaiseApplicationException(response);
 
-            await _redisCacheService.SetCacheData(cacheKey, response.Data, TimeSpan.FromSeconds(86400));
-
             return response.Data;
         }
 
         public async Task<RoleModel> GetRoleById(int id)
         {
-            const string cacheKey = "roles";
-
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<RoleModel>>(cacheKey);
-            if (cachedResponse != null)
-                return cachedResponse.FirstOrDefault(x => x.RoleId == id);
-
             var misApiUrl = _misApiModel.Value.Url;
             var endPoint = _misApiModel.Value.Endpoint.Role;
             var roleServiceUrl = misApiUrl + endPoint + "?roleId=" + id;
@@ -114,12 +83,6 @@ namespace ASM.Infrastructure.Services
 
         public async Task<IEnumerable<RoleModel>> GetRoleByDepartmentId(int departmentId)
         {
-            const string cacheKey = "roles";
-
-            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<RoleModel>>(cacheKey);
-            if (cachedResponse != null)
-                return cachedResponse.Where(x => x.DepartmentId == departmentId);
-
             var misApiUrl = _misApiModel.Value.Url;
             var endPoint = _misApiModel.Value.Endpoint.Role;
             var roleServiceUrl = misApiUrl + endPoint + "?divisionId=" + 1 + "&departmentId=" + departmentId;

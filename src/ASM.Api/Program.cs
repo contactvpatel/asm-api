@@ -27,5 +27,6 @@ namespace ASM.Api
                 {
                     loggerConfig.LogConfiguration(context, provider, Configuration);
                 });
+
     }
 }

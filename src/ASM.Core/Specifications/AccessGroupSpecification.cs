@@ -29,7 +29,7 @@ namespace ASM.Core.Specifications
         public AccessGroupSpecification(Guid applicationId)
             : base(x => x.IsDeleted == false && x.ApplicationId == applicationId && x.IsActive == true)
         {
-            AddInclude(x => x.AccessGroupModulePermissions);
+            AddInclude(x => x.AccessGroupModulePermissions.Where(y => y.IsDeleted == false));
             ApplyOrderBy(x => x.Name);
         }
     }

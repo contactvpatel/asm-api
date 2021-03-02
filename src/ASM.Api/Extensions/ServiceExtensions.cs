@@ -79,7 +79,8 @@ namespace ASM.Api.Extensions
         private static void ConfigureDatabases(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ASMContext>(c =>
-                c.UseSqlServer(configuration.GetConnectionString("ASMDbConnection")).LogTo(Console.WriteLine));
+                c.UseSqlServer(configuration.GetConnectionString("ASMDbConnection"),
+                    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
         }
 
         public static void ConfigureCors(this IServiceCollection services)
