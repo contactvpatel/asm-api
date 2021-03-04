@@ -17,11 +17,13 @@ namespace ASM.Business.Services
         private readonly IModuleRepository _moduleRepository;
         private readonly ISsoService _ssoService;
         private readonly ILogger<ModuleService> _logger;
+        private readonly ISsoService _ssoService;
 
         public ModuleService(IModuleRepository moduleRepository, ILogger<ModuleService> logger,ISsoService ssoService)
         {
             _ssoService = ssoService ?? throw new ArgumentNullException(nameof(ssoService));
             _moduleRepository = moduleRepository ?? throw new ArgumentNullException(nameof(moduleRepository));
+            _ssoService = ssoService ?? throw new ArgumentNullException(nameof(ssoService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 

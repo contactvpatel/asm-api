@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ASM.Core.Entities.Base;
+using ASM.Util.Models;
 
 namespace ASM.Core.Entities
 {
@@ -22,6 +23,8 @@ namespace ASM.Core.Entities
 
         public virtual ModuleType ModuleType { get; set; }
         public virtual Module ParentModule { get; set; }
+        //public virtual ApplicationModel ApplicationModel { get; set; }
+
         public virtual ICollection<AccessGroupModulePermission> AccessGroupModulePermissions { get; set; }
         public virtual ICollection<Module> InverseParentModule { get; set; }
     }

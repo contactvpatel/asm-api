@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ASM.Util.Models;
+using System;
 
 namespace ASM.Api.Dto
 {

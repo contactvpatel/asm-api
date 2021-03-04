@@ -10,6 +10,7 @@ namespace ASM.Core.Specifications
         {
             AddInclude(x => x.ModuleType);
             AddInclude(x => x.ParentModule);
+            //AddInclude(x => x.ApplicationModel);
             ApplyOrderBy(x => x.ApplicationId);
             ApplyOrderBy(x => x.Name);
             ApplyOrderBy(x => x.ParentModule.Name);

@@ -42,7 +42,9 @@ namespace ASM.Business.Services
             var departments = await _misService.GetAllDepartments();
             var applications = await _ISsoService.GetAllApplications();
             return await Task.FromResult(
-                from accessGroup in accessGroups
+                from accessGroup in accessGroups                
+                join applications in application
+                    on accessGroup.ApplicationId equals applications.ApplicationId
                 join department in departments
                     on accessGroup.DepartmentId equals department.DepartmentId into dep
                 from department in dep.DefaultIfEmpty()
@@ -54,6 +56,7 @@ namespace ASM.Business.Services
                     AccessGroupId = accessGroup.AccessGroupId,
                     Name = accessGroup.Name,
                     Description = accessGroup.Description,
+                    ApplicationName=applications.ApplicationName,
                     ApplicationId = accessGroup.ApplicationId,
                     DepartmentId = department?.DepartmentId ?? 0,
                     DepartmentName = department?.DepartmentName ?? string.Empty,

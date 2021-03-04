@@ -18,7 +18,7 @@ namespace ASM.Core.Specifications
         public AccessGroupSpecification(int id)
             : base(x => x.IsDeleted == false && x.AccessGroupId == id)
         {
-            AddInclude(x => x.AccessGroupModulePermissions.Where(y => y.IsDeleted == false));
+            AddInclude(x => x.AccessGroupModulePermissions.Where(x => x.IsDeleted == false));
         }
         public AccessGroupSpecification(Guid applicationId)
             : base(x => x.IsDeleted == false && x.ApplicationId == applicationId && x.IsActive==true )
