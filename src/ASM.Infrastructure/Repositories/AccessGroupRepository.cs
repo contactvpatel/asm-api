@@ -34,8 +34,16 @@ namespace ASM.Infrastructure.Repositories
 
         public async Task<IEnumerable<AccessGroup>> GetByApplicationDepartment(Guid applicationId, int departmentId)
         {
-            var spec = new AccessGroupSpecification(applicationId, departmentId);
-            return await GetAsync(spec);
+            if (departmentId == 0) 
+            {
+                var spec = new AccessGroupSpecification(applicationId);
+                return await GetAsync(spec);
+            }
+            else 
+            {
+                var spec = new AccessGroupSpecification(applicationId, departmentId);
+                return await GetAsync(spec);
+            }
         }
 
         public async Task<AccessGroup> Update(AccessGroup accessGroup)

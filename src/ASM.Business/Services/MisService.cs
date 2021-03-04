@@ -83,7 +83,7 @@ namespace ASM.Business.Services
 
         public async Task<IEnumerable<PositionModel>> GetPositions(int roleId)
         {
-            return await _misService.GetPositions(roleId);
+            return await _misService.GetPositionsByRoleId(roleId);
         }
     }
 }

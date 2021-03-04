@@ -11,7 +11,7 @@ namespace ASM.Api.Dto
         public Guid ApplicationId { get; set; }
         public int? ParentModuleId { get; set; }
         public bool IsActive { get; set; }
-        
+        public string ApplicationName { get; set; }
         public virtual ModuleTypeResponse ModuleType { get; set; }
         public virtual ModuleResponse ParentModule { get; set; }
     }

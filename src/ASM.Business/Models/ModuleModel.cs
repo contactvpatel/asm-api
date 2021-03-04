@@ -8,6 +8,7 @@ namespace ASM.Business.Models
         public int ModuleId { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
+        public string ApplicationName { get; set; }
         public int ModuleTypeId { get; set; }
         public Guid ApplicationId { get; set; }
         public int? ParentModuleId { get; set; }

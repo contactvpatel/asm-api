@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ASM.Business.Interfaces;
 using ASM.Business.Mapper;
@@ -14,17 +15,38 @@ namespace ASM.Business.Services
     public class ModuleService : IModuleService
     {
         private readonly IModuleRepository _moduleRepository;
+        private readonly ISsoService _ssoService;
         private readonly ILogger<ModuleService> _logger;
 
-        public ModuleService(IModuleRepository moduleRepository, ILogger<ModuleService> logger)
+        public ModuleService(IModuleRepository moduleRepository, ILogger<ModuleService> logger,ISsoService ssoService)
         {
+            _ssoService = ssoService ?? throw new ArgumentNullException(nameof(ssoService));
             _moduleRepository = moduleRepository ?? throw new ArgumentNullException(nameof(moduleRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<IEnumerable<ModuleModel>> GetAll()
         {
-            return ObjectMapper.Mapper.Map<IEnumerable<ModuleModel>>(await _moduleRepository.GetAll());
+            var modules = await _moduleRepository.GetAll();            
+            var applications = await _ssoService.GetAllApplications();
+            return await Task.FromResult(
+                from module in modules
+                join application in applications
+                on module.ApplicationId equals application.ApplicationId into app
+                from application in app.DefaultIfEmpty()
+                select new ModuleModel
+                {
+                    ModuleId=module.ModuleId,
+                    ApplicationId=module.ApplicationId,
+                    ApplicationName = application.ApplicationName,
+                    Code=module.Code,
+                    Name=module.Name,
+                    IsActive=module.IsActive,
+                    ParentModule =
+                        ObjectMapper.Mapper.Map<ModuleModel>(module.ParentModule),
+                    ModuleType =
+                        ObjectMapper.Mapper.Map<ModuleTypeModel>(module.ModuleType)
+                });
         }
 
         public async Task<ModuleModel> GetById(int id)

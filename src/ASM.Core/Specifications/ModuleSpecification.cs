@@ -22,7 +22,7 @@ namespace ASM.Core.Specifications
         }
 
         public ModuleSpecification(Guid applicationId) : base(x =>
-            x.ApplicationId == applicationId && x.IsDeleted == false)
+            x.ApplicationId == applicationId && x.IsDeleted == false && x.IsActive ==true)
         {
             AddInclude(x => x.ModuleType);
             AddInclude(x => x.ParentModule);
