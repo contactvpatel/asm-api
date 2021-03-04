@@ -14,9 +14,8 @@ namespace ASM.Business.Models
         public Guid ApplicationId { get; set; }
         public int? ParentModuleId { get; set; }
         public bool? IsActive { get; set; }
-        public string ApplicationName { get; set; }
+
         public virtual ModuleTypeModel ModuleType { get; set; }
-        //public virtual ApplicationModel  ApplicationModel { get; set; }
         public virtual ModuleModel ParentModule { get; set; }
     }
 }

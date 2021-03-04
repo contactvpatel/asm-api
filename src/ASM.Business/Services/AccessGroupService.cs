@@ -26,7 +26,7 @@ namespace ASM.Business.Services
         /// <param name="misService"></param>
         /// <param name="logger"></param>
         public AccessGroupService(IAccessGroupRepository accessGroupRepository, IMisService misService,
-            ILogger<AccessGroupService> logger,ISsoService ISsoService)
+            ILogger<AccessGroupService> logger, ISsoService ISsoService)
         {
             _ISsoService = ISsoService ??
                                      throw new ArgumentNullException(nameof(ISsoService));
@@ -42,13 +42,11 @@ namespace ASM.Business.Services
             var departments = await _misService.GetAllDepartments();
             var applications = await _ISsoService.GetAllApplications();
             return await Task.FromResult(
-                from accessGroup in accessGroups                
-                join applications in application
-                    on accessGroup.ApplicationId equals applications.ApplicationId
+                from accessGroup in accessGroups
                 join department in departments
                     on accessGroup.DepartmentId equals department.DepartmentId into dep
                 from department in dep.DefaultIfEmpty()
-                join application in applications 
+                join application in applications
                 on accessGroup.ApplicationId equals application.ApplicationId into app
                 from application in app.DefaultIfEmpty()
                 select new AccessGroupModel
@@ -56,7 +54,6 @@ namespace ASM.Business.Services
                     AccessGroupId = accessGroup.AccessGroupId,
                     Name = accessGroup.Name,
                     Description = accessGroup.Description,
-                    ApplicationName=applications.ApplicationName,
                     ApplicationId = accessGroup.ApplicationId,
                     DepartmentId = department?.DepartmentId ?? 0,
                     DepartmentName = department?.DepartmentName ?? string.Empty,
