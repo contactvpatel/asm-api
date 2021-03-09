@@ -3,6 +3,7 @@
     public class ApplicationSecurityModel
     {
         public int ModuleId { get; set; }
+        public string ModuleName { get; set; }
         public string ModuleCode { get; set; }
         public bool IsControlType { get; set; }
         public bool HasViewAccess { get; set; }

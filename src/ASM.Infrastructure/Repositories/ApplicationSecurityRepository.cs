@@ -68,7 +68,7 @@ namespace ASM.Infrastructure.Repositories
             if (assignedAccessGroupModulePermissions.Any())
             {
                 modules = _asmContext.Modules
-                    .Where(x => x.ApplicationId == applicationId)
+                    .Where(x => x.ApplicationId == applicationId && x.IsDeleted == false && x.IsActive == true)
                     .Include(x => x.ModuleType)
                     .ToList();
             }
@@ -82,17 +82,21 @@ namespace ASM.Infrastructure.Repositories
                 if (existingApplicationSecurityModel == null)
                 {
                     var currentModule = modules.FirstOrDefault(x => x.ModuleId == currentAccessGroupModulePermission.ModuleId);
-                    applicationSecurityModels.Add(new ApplicationSecurityModel
+                    if (currentModule != null)
                     {
-                        ModuleId = currentAccessGroupModulePermission.ModuleId,
-                        ModuleCode = currentModule?.Code,
-                        IsControlType = currentModule != null && currentModule.ModuleType.IsControlType,
-                        HasViewAccess = currentAccessGroupModulePermission.HasViewAccess,
-                        HasCreateAccess = currentAccessGroupModulePermission.HasCreateAccess,
-                        HasUpdateAccess = currentAccessGroupModulePermission.HasUpdateAccess,
-                        HasDeleteAccess = currentAccessGroupModulePermission.HasDeleteAccess,
-                        HasAccessRight = currentAccessGroupModulePermission.HasAccessRight
-                    });
+                        applicationSecurityModels.Add(new ApplicationSecurityModel
+                        {
+                            ModuleId = currentAccessGroupModulePermission.ModuleId,
+                            ModuleName = currentModule.Name,
+                            ModuleCode = currentModule.Code,
+                            IsControlType = currentModule.ModuleType.IsControlType,
+                            HasViewAccess = currentAccessGroupModulePermission.HasViewAccess,
+                            HasCreateAccess = currentAccessGroupModulePermission.HasCreateAccess,
+                            HasUpdateAccess = currentAccessGroupModulePermission.HasUpdateAccess,
+                            HasDeleteAccess = currentAccessGroupModulePermission.HasDeleteAccess,
+                            HasAccessRight = currentAccessGroupModulePermission.HasAccessRight
+                        });
+                    }
                 }
                 else
                 {
