@@ -4,6 +4,7 @@ using ASM.Api.Dto;
 using ASM.Business.Interfaces;
 using ASM.Util.Logging;
 using ASM.Util.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +17,7 @@ namespace ASM.Api.Controllers
     [Route("api/v{version:apiVersion}/application-security")]
     [ApiController]
     [ApiVersion("1.0")]
+    [AllowAnonymous]
     public class ApplicationSecurityController : ControllerBase
     {
         private readonly IApplicationSecurityService _applicationSecurityService;

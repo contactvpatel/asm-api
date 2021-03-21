@@ -9,6 +9,7 @@ using ASM.Api.HealthCheck;
 using ASM.Api.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using ApiError = ASM.Api.Middleware.ApiError;
 using Microsoft.Extensions.Hosting;
@@ -38,10 +39,12 @@ namespace ASM.Api
 
             services.ConfigureSwagger();
 
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddControllers(options =>
                 {
+                    options.Filters.Add(typeof(CustomAuthorization));
                     //options.ReturnHttpNotAcceptable = true;
-
                     //Filter to track Action Performance for Entire application's actions
                     //options.Filters.Add(typeof(TrackActionPerformanceFilter));
                     options.Filters.Add<ValidationFilter>();

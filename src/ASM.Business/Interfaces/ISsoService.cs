@@ -9,5 +9,7 @@ namespace ASM.Business.Interfaces
     {
         Task<IEnumerable<ApplicationModel>> GetAllApplications();
         Task<ApplicationModel> GetApplicationById(Guid id);
+        Task<bool> ValidateToken(string token);
+        Task<bool> Logout(string token);
     }
 }

@@ -63,6 +63,32 @@ namespace ASM.Infrastructure.Services
             */
         }
 
+        public async Task<bool> ValidateToken(string token)
+        {
+            var ssoApiUrl = _ssoApiModel.Value.Url;
+            var endPoint = _ssoApiModel.Value.Endpoint.ValidateToken;
+            _client.AddDefaultHeader("Authorization", token);
+            _request.Parameters.Clear();
+            _request.Resource = ssoApiUrl + endPoint;
+            _request.Method = Method.POST;
+            _request.AddHeader("Content-type", "application/json");
+            var response = await _client.ExecuteAsync(_request);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public async Task<bool> Logout(string token)
+        {
+            var ssoApiUrl = _ssoApiModel.Value.Url;
+            var endPoint = _ssoApiModel.Value.Endpoint.Logout;
+            _client.AddDefaultHeader("Authorization", token);
+            _request.Parameters.Clear();
+            _request.Resource = ssoApiUrl + endPoint;
+            _request.Method = Method.POST;
+            _request.AddHeader("Content-type", "application/json");
+            var response = await _client.ExecuteAsync(_request);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
         private async Task<T> Execute<T>(string url)
         {
             _request.Parameters.Clear();

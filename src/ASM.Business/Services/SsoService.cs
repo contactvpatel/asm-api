@@ -46,5 +46,15 @@ namespace ASM.Business.Services
 
             return await _ssoService.GetApplicationById(id);
         }
+
+        public async Task<bool> ValidateToken(string token)
+        {
+            return await _ssoService.ValidateToken(token);
+        }
+
+        public async Task<bool> Logout(string token)
+        {
+            return await _ssoService.Logout(token);
+        }
     }
 }
