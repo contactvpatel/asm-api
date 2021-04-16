@@ -35,7 +35,7 @@ namespace ASM.Api.Controllers
         public async Task<ActionResult<IEnumerable<PositionModel>>> GetByRoleId(int roleId)
         {
             _logger.LogInformationExtension($"Get Positions By Role Id: {roleId}");
-            var positions = await _misService.GetPositions(roleId);
+            var positions = await _misService.GetPositionsByRoleId(roleId);
             string message;
 
             if (positions == null)

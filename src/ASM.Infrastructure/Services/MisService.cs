@@ -94,6 +94,19 @@ namespace ASM.Infrastructure.Services
             return response.Data;
         }
 
+        public async Task<IEnumerable<PositionModel>> GetAllPositions()
+        {
+            var misApiUrl = _misApiModel.Value.Url;
+            var endPoint = _misApiModel.Value.Endpoint.Position;
+            var positionServiceUrl = misApiUrl + endPoint;
+            var response = await Execute<MisResponse<PositionModel>>(positionServiceUrl);
+
+            if (!response.Status)
+                RaiseApplicationException(response);
+
+            return response.Data;
+        }
+
         public async Task<IEnumerable<PositionModel>> GetPositionsByRoleId(int roleId)
         {
             var misApiUrl = _misApiModel.Value.Url;
@@ -128,19 +141,6 @@ namespace ASM.Infrastructure.Services
                                response.Messages?.FirstOrDefault()?.ErrorMessage;
             _logger.LogErrorExtension(errorMessage, null);
             throw new ApplicationException(errorMessage);
-        }
-
-        public async Task<IEnumerable<PositionModel>> GetPositions()
-        {
-            var misApiUrl = _misApiModel.Value.Url;
-            var endPoint = _misApiModel.Value.Endpoint.Position;
-            var positionServiceUrl = misApiUrl + endPoint;
-            var response = await Execute<MisResponse<PositionModel>>(positionServiceUrl);
-
-            if (!response.Status)
-                RaiseApplicationException(response);
-
-            return response.Data;
         }
     }
 }

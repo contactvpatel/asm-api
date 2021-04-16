@@ -43,7 +43,7 @@ namespace ASM.Api
 
             services.AddControllers(options =>
                 {
-                    options.Filters.Add(typeof(CustomAuthorization));
+                    //options.Filters.Add(typeof(CustomAuthorization));
                     //options.ReturnHttpNotAcceptable = true;
                     //Filter to track Action Performance for Entire application's actions
                     //options.Filters.Add(typeof(TrackActionPerformanceFilter));
@@ -98,7 +98,7 @@ namespace ASM.Api
             return LogLevel.Error;
         }
 
-        private void UpdateApiErrorResponse(HttpContext context, Exception ex, Models.Response<ApiError> apiError)
+        private static void UpdateApiErrorResponse(HttpContext context, Exception ex, Models.Response<ApiError> apiError)
         {
             if (ex.GetType().Name == nameof(SqlException))
             {

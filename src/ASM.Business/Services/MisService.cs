@@ -81,9 +81,34 @@ namespace ASM.Business.Services
             return await _misService.GetRoleByDepartmentId(departmentId);
         }
 
-        public async Task<IEnumerable<PositionModel>> GetPositions(int roleId)
+        public async Task<IEnumerable<PositionModel>> GetAllPositions()
         {
-            return await _misService.GetPositionsByRoleId(roleId);
+            const string cacheKey = "positions";
+
+            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<PositionModel>>(cacheKey);
+            if (cachedResponse != null)
+                return cachedResponse;
+
+            var positions = await _misService.GetAllPositions();
+
+            await _redisCacheService.SetCacheData(cacheKey, positions, TimeSpan.FromSeconds(86400));
+
+            return positions;
+        }
+
+        public async Task<IEnumerable<PositionModel>> GetPositionsByRoleId(int roleId)
+        {
+            const string cacheKey = "positions";
+
+            var cachedResponse = await _redisCacheService.GetCachedData<IEnumerable<PositionModel>>(cacheKey);
+            if (cachedResponse != null)
+                return cachedResponse.Where(x => x.RoleId == roleId);
+
+            var positions = await _misService.GetAllPositions();
+
+            await _redisCacheService.SetCacheData(cacheKey, positions, TimeSpan.FromSeconds(86400));
+
+            return positions != null ? positions.Where(x => x.RoleId == roleId) : new List<PositionModel>();
         }
     }
 }

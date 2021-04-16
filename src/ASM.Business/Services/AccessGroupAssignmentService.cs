@@ -9,7 +9,6 @@ using ASM.Core.Entities;
 using ASM.Core.Repositories;
 using ASM.Util.Logging;
 using Microsoft.Extensions.Logging;
-using IMisService = ASM.Core.Services.IMisService;
 
 namespace ASM.Business.Services
 {
@@ -43,7 +42,7 @@ namespace ASM.Business.Services
             var accessGroupAssignments = await _accessGroupAssignmentRepository.GetAll();
             var departments = await _misService.GetAllDepartments();
             var roles = await _misService.GetAllRoles();
-            var positions = await _misService.GetPositions();
+            var positions = await _misService.GetAllPositions();
             var applications = await _ssoService.GetAllApplications();
             return await Task.FromResult(
                 from accessGroupAssignment in accessGroupAssignments
